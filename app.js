@@ -1117,3 +1117,147 @@ document.getElementById('addTaskBtnCalendar')?.addEventListener('click', () => {
     taskModal.style.display = 'block';
     taskForm.reset();
 });
+
+
+// ==================== MOBILE MENU FUNCTIONALITY ====================
+const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+const sidebar = document.querySelector('.sidebar');
+let mobileOverlay = null;
+
+// Create mobile overlay
+function createMobileOverlay() {
+    if (!mobileOverlay) {
+        mobileOverlay = document.createElement('div');
+        mobileOverlay.className = 'mobile-overlay';
+        document.body.appendChild(mobileOverlay);
+        
+        mobileOverlay.addEventListener('click', closeMobileMenu);
+    }
+}
+
+// Toggle mobile menu
+function toggleMobileMenu() {
+    if (window.innerWidth <= 600) {
+        createMobileOverlay();
+        sidebar.classList.toggle('mobile-open');
+        mobileOverlay.classList.toggle('active');
+        
+        // Change icon
+        const icon = mobileMenuToggle.querySelector('i');
+        if (sidebar.classList.contains('mobile-open')) {
+            icon.className = 'fas fa-times';
+        } else {
+            icon.className = 'fas fa-bars';
+        }
+    }
+}
+
+// Close mobile menu
+function closeMobileMenu() {
+    if (sidebar.classList.contains('mobile-open')) {
+        sidebar.classList.remove('mobile-open');
+        if (mobileOverlay) {
+            mobileOverlay.classList.remove('active');
+        }
+        const icon = mobileMenuToggle.querySelector('i');
+        icon.className = 'fas fa-bars';
+    }
+}
+
+// Event listeners
+if (mobileMenuToggle) {
+    mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+}
+
+// Close menu when clicking nav items on mobile
+navItems.forEach(item => {
+    item.addEventListener('click', () => {
+        if (window.innerWidth <= 600) {
+            closeMobileMenu();
+        }
+    });
+});
+
+// Close menu on window resize
+let resizeTimer;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+        if (window.innerWidth > 600) {
+            closeMobileMenu();
+        }
+    }, 250);
+});
+
+// Prevent body scroll when mobile menu is open
+function updateBodyScroll() {
+    if (sidebar.classList.contains('mobile-open')) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = '';
+    }
+}
+
+// Update on menu toggle
+const observer = new MutationObserver(updateBodyScroll);
+if (sidebar) {
+    observer.observe(sidebar, { attributes: true, attributeFilter: ['class'] });
+}
+
+// ==================== TOUCH IMPROVEMENTS ====================
+// Improve touch scrolling for task board
+if (taskBoard) {
+    let isScrolling = false;
+    let startX = 0;
+    let scrollLeft = 0;
+    
+    taskBoard.addEventListener('touchstart', (e) => {
+        isScrolling = true;
+        startX = e.touches[0].pageX - taskBoard.offsetLeft;
+        scrollLeft = taskBoard.scrollLeft;
+    });
+    
+    taskBoard.addEventListener('touchmove', (e) => {
+        if (!isScrolling) return;
+        e.preventDefault();
+        const x = e.touches[0].pageX - taskBoard.offsetLeft;
+        const walk = (x - startX) * 2;
+        taskBoard.scrollLeft = scrollLeft - walk;
+    });
+    
+    taskBoard.addEventListener('touchend', () => {
+        isScrolling = false;
+    });
+}
+
+// ==================== RESPONSIVE UTILITIES ====================
+// Detect screen size
+function getScreenSize() {
+    const width = window.innerWidth;
+    if (width <= 360) return 'xs';
+    if (width <= 600) return 'sm';
+    if (width <= 768) return 'md';
+    if (width <= 1024) return 'lg';
+    if (width <= 1200) return 'xl';
+    return 'xxl';
+}
+
+// Update layout on orientation change
+window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+        renderBoard();
+        if (views.notes.classList.contains('active')) {
+            renderNotes();
+        }
+        if (views.calendar.classList.contains('active')) {
+            renderCalendar();
+        }
+    }, 100);
+});
+
+// Optimize for mobile performance
+if ('ontouchstart' in window) {
+    document.body.classList.add('touch-device');
+}
+
+console.log('Responsive features initialized');

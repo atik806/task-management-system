@@ -173,7 +173,9 @@ body {
 }
 
 /* Buttons */
-.btn-primary, .btn-secondary, .btn-cancel {
+.btn-primary,
+.btn-secondary,
+.btn-cancel {
     padding: 12px 24px;
     border: none;
     border-radius: 8px;
@@ -471,8 +473,13 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .modal-content {
@@ -498,6 +505,7 @@ body {
         transform: translateY(-50px);
         opacity: 0;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;
@@ -879,12 +887,34 @@ body.dark-mode {
     gap: 12px;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+/* Large Tablets and Small Desktops (1024px - 1200px) */
+@media (max-width: 1200px) {
+    .task-board {
+        gap: 16px;
+    }
+
+    .task-column {
+        min-width: 280px;
+        max-width: 280px;
+    }
+
+    .notes-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+}
+
+/* Tablets (768px - 1024px) */
+@media (max-width: 1024px) {
     .sidebar {
         width: 70px;
     }
-    
+
+    .sidebar-header h1 {
+        font-size: 20px;
+    }
+
     .sidebar-header h1 span,
     .nav-item span,
     .user-info span,
@@ -892,34 +922,575 @@ body.dark-mode {
     .btn-theme span {
         display: none;
     }
-    
+
+    .nav-item {
+        justify-content: center;
+        padding: 12px;
+    }
+
     .main-content {
         margin-left: 70px;
     }
-    
+
+    .top-bar {
+        padding: 20px 24px;
+    }
+
+    .top-bar-left h2 {
+        font-size: 24px;
+    }
+
+    .board-container {
+        padding: 20px 24px;
+    }
+
+    .task-column {
+        min-width: 260px;
+        max-width: 260px;
+    }
+
+    .notes-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 16px;
+    }
+
+    .calendar-grid {
+        gap: 6px;
+    }
+
+    .calendar-day {
+        min-height: 80px;
+        padding: 10px;
+    }
+}
+
+/* Mobile Landscape and Small Tablets (600px - 768px) */
+@media (max-width: 768px) {
+
+    /* Hide sidebar by default on tablets too */
+    .sidebar {
+        position: fixed;
+        width: 280px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1001;
+        left: 0;
+        top: 0;
+        height: 100vh;
+    }
+
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+    .sidebar-header {
+        padding: 16px 10px;
+    }
+
+    .sidebar-header h1 {
+        font-size: 24px;
+        justify-content: center;
+    }
+
+    .sidebar-nav {
+        padding: 12px 0;
+    }
+
+    .nav-item {
+        padding: 12px 10px;
+        justify-content: center;
+    }
+
+    .nav-item i {
+        font-size: 20px;
+    }
+
+    .sidebar-footer {
+        padding: 12px 10px;
+    }
+
+    .user-info {
+        padding: 8px;
+        justify-content: center;
+    }
+
+    .user-info i {
+        font-size: 20px;
+    }
+
+    .btn-logout,
+    .btn-theme {
+        padding: 8px;
+        justify-content: center;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        width: 100%;
+    }
+
     .top-bar {
         flex-direction: column;
         gap: 16px;
         align-items: flex-start;
+        padding: 16px 20px;
+        padding-left: 70px;
     }
-    
+
+    .top-bar-left h2 {
+        font-size: 22px;
+    }
+
+    .subtitle {
+        font-size: 13px;
+    }
+
     .top-bar-right {
         width: 100%;
+        flex-wrap: wrap;
     }
-    
+
+    .top-bar-right button {
+        flex: 1;
+        min-width: 120px;
+    }
+
+    .board-container {
+        padding: 16px 20px;
+    }
+
+    /* Stack columns vertically on tablets */
+    .task-board {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding-bottom: 16px;
+    }
+
     .task-column {
-        min-width: 280px;
-        max-width: 280px;
+        min-width: 100%;
+        max-width: 100%;
+        width: 100%;
     }
-    
+
+    .mytasks-container,
+    .calendar-container,
+    .notes-container {
+        padding: 16px 20px;
+    }
+
+    .mytasks-filters {
+        gap: 8px;
+        padding-top: 16px;
+    }
+
+    .filter-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+
+    .notes-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 16px;
+    }
+
     .calendar-grid {
-        grid-template-columns: repeat(7, 1fr);
         gap: 4px;
     }
-    
+
+    .calendar-day {
+        min-height: 70px;
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    .calendar-day-number {
+        font-size: 13px;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+
+    .modal-large {
+        max-width: 95%;
+    }
+
+    .modal-medium {
+        max-width: 95%;
+    }
+
+    .modal-small {
+        max-width: 95%;
+    }
+}
+
+/* Mobile Portrait (360px - 600px) */
+@media (max-width: 600px) {
+    body {
+        font-size: 14px;
+    }
+
+    /* Hide sidebar completely by default */
+    .sidebar {
+        position: fixed;
+        width: 280px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1001;
+        left: 0;
+        top: 0;
+        height: 100vh;
+    }
+
+    /* Show sidebar when open */
+    .sidebar.mobile-open {
+        transform: translateX(0);
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Show all text when sidebar is open */
+    .sidebar.mobile-open .sidebar-header h1 span,
+    .sidebar.mobile-open .nav-item span,
+    .sidebar.mobile-open .user-info span,
+    .sidebar.mobile-open .btn-logout span,
+    .sidebar.mobile-open .btn-theme span {
+        display: inline;
+    }
+
+    .sidebar.mobile-open .nav-item {
+        justify-content: flex-start;
+        padding: 12px 20px;
+    }
+
+    .sidebar.mobile-open .sidebar-header h1 {
+        justify-content: flex-start;
+    }
+
+    /* Main content takes full width */
+    .main-content {
+        margin-left: 0 !important;
+        width: 100%;
+    }
+
+    .top-bar {
+        padding: 12px 16px;
+        position: relative;
+    }
+
+    .top-bar-left h2 {
+        font-size: 20px;
+    }
+
+    .subtitle {
+        font-size: 12px;
+    }
+
+    .top-bar-right {
+        gap: 8px;
+    }
+
+    .top-bar-right button {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+
+    .top-bar-right button span {
+        display: none;
+    }
+
+    .board-container {
+        padding: 12px 16px;
+        overflow-x: visible;
+    }
+
+    /* Stack columns vertically on mobile */
+    .task-board {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        overflow-x: visible;
+    }
+
+    /* Full width columns on mobile */
+    .task-column {
+        min-width: 100%;
+        max-width: 100%;
+        width: 100%;
+        padding: 16px;
+    }
+
+    .column-header {
+        margin-bottom: 12px;
+    }
+
+    .column-title {
+        font-size: 15px;
+    }
+
+    .task-card {
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+
+    .task-title {
+        font-size: 14px;
+    }
+
+    .task-description {
+        font-size: 13px;
+    }
+
+    .task-actions {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .task-actions button {
+        width: 100%;
+    }
+
+    .mytasks-container {
+        padding: 12px 16px;
+    }
+
+    .mytasks-filters {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .filter-btn {
+        flex: 1;
+        min-width: calc(50% - 4px);
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+
+    .mytask-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px;
+    }
+
+    .mytask-actions {
+        width: 100%;
+        margin-top: 12px;
+    }
+
+    .mytask-actions button {
+        flex: 1;
+    }
+
+    .calendar-container {
+        padding: 12px 16px;
+    }
+
+    .calendar-header {
+        margin-bottom: 16px;
+    }
+
+    .calendar-header h3 {
+        font-size: 18px;
+    }
+
+    .calendar-grid {
+        gap: 2px;
+    }
+
+    .calendar-day-header {
+        padding: 8px 4px;
+        font-size: 11px;
+    }
+
+    .calendar-day {
+        min-height: 50px;
+        padding: 6px;
+        font-size: 12px;
+    }
+
+    .calendar-day-number {
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .calendar-task-dot {
+        height: 3px;
+    }
+
+    .calendar-tasks {
+        padding: 16px;
+        margin-top: 16px;
+    }
+
+    .notes-container {
+        padding: 12px 16px;
+    }
+
+    .notes-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .notes-list {
+        gap: 12px;
+    }
+
+    .note-card {
+        padding: 16px;
+    }
+
+    .note-title {
+        font-size: 16px;
+    }
+
+    .note-content {
+        font-size: 13px;
+        max-height: 120px;
+        -webkit-line-clamp: 5;
+        line-clamp: 5;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
+        padding: 0;
+    }
+
+    .modal-header {
+        padding: 16px;
+    }
+
+    .modal-header h3 {
+        font-size: 18px;
+    }
+
+    .modal-body {
+        padding: 16px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+        gap: 8px;
+    }
+
+    .modal-actions button {
+        width: 100%;
+    }
+
+    .color-picker {
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .color-option {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+/* Extra Small Mobile (360px and below) */
+@media (max-width: 360px) {
+    .top-bar-left h2 {
+        font-size: 18px;
+    }
+
+    .task-column {
+        min-width: 240px;
+        max-width: 240px;
+    }
+
+    .filter-btn {
+        min-width: 100%;
+    }
+
+    .calendar-day {
+        min-height: 45px;
+        padding: 4px;
+    }
+
+    .calendar-day-number {
+        font-size: 11px;
+    }
+
+    .notes-grid {
+        gap: 10px;
+    }
+}
+
+/* Touch-Friendly Improvements */
+@media (hover: none) and (pointer: coarse) {
+
+    /* Increase touch targets */
+    .btn-icon,
+    .task-actions button,
+    .note-actions button {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .nav-item {
+        min-height: 48px;
+    }
+
+    .filter-btn {
+        min-height: 44px;
+    }
+
+    /* Remove hover effects on touch devices */
+    .task-card:hover,
+    .note-card:hover,
+    .mytask-item:hover {
+        transform: none;
+    }
+
+    /* Always show action buttons on touch devices */
+    .note-actions {
+        opacity: 1;
+    }
+}
+
+/* Landscape Orientation Adjustments */
+@media (max-width: 900px) and (orientation: landscape) {
+    .sidebar {
+        width: 60px;
+    }
+
+    .main-content {
+        margin-left: 60px;
+    }
+
+    .top-bar {
+        padding: 12px 20px;
+    }
+
     .calendar-day {
         min-height: 60px;
-        padding: 8px;
+    }
+}
+
+/* Print Styles */
+@media print {
+
+    .sidebar,
+    .top-bar-right,
+    .task-actions,
+    .note-actions,
+    .modal {
+        display: none !important;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .task-card,
+    .note-card {
+        break-inside: avoid;
     }
 }
 
@@ -1061,6 +1632,7 @@ body.dark-mode {
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 6;
+    line-clamp: 6;
     -webkit-box-orient: vertical;
 }
 
@@ -1099,6 +1671,7 @@ body.dark-mode {
 .notes-list .note-content {
     max-height: none;
     -webkit-line-clamp: 1;
+    line-clamp: 1;
     margin-bottom: 0;
     flex: 2;
 }
@@ -1133,7 +1706,7 @@ body.dark-mode {
     transform: scale(1.1);
 }
 
-.color-picker input[type="radio"]:checked + .color-option {
+.color-picker input[type="radio"]:checked+.color-option {
     border-color: var(--primary);
     box-shadow: 0 0 0 2px var(--bg-secondary), 0 0 0 4px var(--primary);
 }
@@ -1214,18 +1787,221 @@ body.dark-mode .note-card.color-purple {
     .notes-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .notes-header {
         flex-direction: column;
         gap: 16px;
         align-items: flex-start;
     }
-    
+
     .notes-actions {
         width: 100%;
     }
-    
+
     .notes-actions button {
         flex: 1;
+    }
+}
+
+
+/* ==================== MOBILE MENU TOGGLE ==================== */
+.mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 1001;
+    background: var(--primary);
+    color: white;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s;
+}
+
+.mobile-menu-toggle:hover {
+    background: var(--primary-dark);
+    transform: scale(1.05);
+}
+
+.mobile-menu-toggle i {
+    font-size: 20px;
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .top-bar {
+        padding-left: 70px !important;
+    }
+
+    .board-container {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+
+/* Mobile Overlay */
+.mobile-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.mobile-overlay.active {
+    display: block;
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Better Touch Scrolling */
+.board-container,
+.mytasks-container,
+.calendar-container,
+.notes-container {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent Text Selection During Drag */
+.task-card.sortable-drag {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Loading State */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+
+    .task-card,
+    .note-card,
+    .mytask-item {
+        border: 2px solid var(--dark);
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        border: 2px solid currentColor;
+    }
+}
+
+/* Focus Visible for Keyboard Navigation */
+*:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+
+/* ==================== MOBILE FIXES ==================== */
+
+/* Ensure no horizontal scroll on mobile */
+@media (max-width: 768px) {
+    body {
+        overflow-x: hidden;
+    }
+
+    .dashboard {
+        overflow-x: hidden;
+    }
+
+    .main-content {
+        overflow-x: hidden;
+    }
+
+    /* Ensure board container doesn't cause horizontal scroll */
+    .board-container {
+        overflow-x: hidden;
+        width: 100%;
+    }
+
+    /* Task board should not scroll horizontally */
+    .task-board {
+        overflow-x: hidden;
+        width: 100%;
+    }
+
+    /* Task columns full width */
+    .task-column {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    /* Task cards full width within column */
+    .task-card {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Ensure sidebar doesn't affect layout when hidden */
+    .sidebar:not(.mobile-open) {
+        display: none;
+    }
+
+    /* Mobile menu always visible */
+    .mobile-menu-toggle {
+        display: flex !important;
+    }
+}
+
+/* Extra specificity for mobile portrait */
+@media (max-width: 600px) {
+
+    /* Force vertical stacking */
+    .task-board {
+        display: flex !important;
+        flex-direction: column !important;
+        flex-wrap: nowrap !important;
+    }
+
+    /* Prevent any horizontal layout */
+    .task-column {
+        flex: 0 0 100% !important;
+    }
+
+    /* Adjust top bar for mobile menu */
+    .top-bar {
+        padding-left: 70px !important;
+    }
+
+    /* Ensure view containers don't overflow */
+    .view-container {
+        overflow-x: hidden;
+        width: 100%;
     }
 }
