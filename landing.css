@@ -582,63 +582,485 @@ footer {
     color: #94a3b8;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+/* Large Tablets (768px - 1024px) */
+@media (max-width: 1024px) {
+    .nav-container {
+        padding: 20px 30px;
+    }
+    
     .hero {
-        grid-template-columns: 1fr;
-        padding: 80px 20px 60px;
+        padding: 100px 30px 70px;
+        gap: 60px;
     }
     
     .hero-content h1 {
-        font-size: 36px;
+        font-size: 48px;
+    }
+    
+    .features {
+        padding: 80px 30px;
+    }
+    
+    .features-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    
+    .about {
+        padding: 80px 30px;
+    }
+    
+    .cta {
+        padding: 80px 30px;
+    }
+}
+
+/* Tablets and Small Desktops (600px - 768px) */
+@media (max-width: 768px) {
+    /* Navigation */
+    .nav-container {
+        padding: 16px 20px;
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+    }
+    
+    .nav-links {
+        width: 100%;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+    
+    .nav-links a {
+        font-size: 14px;
+    }
+    
+    .btn-nav {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+    
+    /* Hero Section */
+    .hero {
+        grid-template-columns: 1fr;
+        padding: 80px 20px 60px;
+        gap: 40px;
+    }
+    
+    .hero-content h1 {
+        font-size: 40px;
+    }
+    
+    .hero-content p {
+        font-size: 18px;
     }
     
     .hero-buttons {
         flex-direction: column;
         width: 100%;
+        gap: 12px;
     }
     
     .btn-primary-large, .btn-secondary-large {
         width: 100%;
         justify-content: center;
+        padding: 14px 28px;
+    }
+    
+    .hero-stats {
+        gap: 24px;
     }
     
     .task-preview {
         display: none;
     }
     
-    .about-content {
-        grid-template-columns: 1fr;
-    }
-    
-    .footer-content {
-        grid-template-columns: 1fr;
-        gap: 40px;
-    }
-    
-    .nav-container {
-        padding: 20px;
-    }
-    
-    .nav-links {
-        gap: 20px;
-        flex-wrap: wrap;
+    /* Features */
+    .features {
+        padding: 60px 20px;
     }
     
     .section-header h2 {
         font-size: 32px;
     }
     
-    .features {
-        padding: 60px 20px;
+    .section-header p {
+        font-size: 16px;
     }
     
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+    
+    .feature-card {
+        padding: 32px;
+    }
+    
+    /* About */
     .about {
         padding: 60px 20px;
     }
     
+    .about-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    .about-text h2 {
+        font-size: 32px;
+    }
+    
+    .about-text p {
+        font-size: 16px;
+    }
+    
+    /* CTA */
     .cta {
         padding: 60px 20px;
+    }
+    
+    .cta h2 {
+        font-size: 32px;
+    }
+    
+    .cta p {
+        font-size: 18px;
+    }
+    
+    /* Footer */
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    footer {
+        padding: 60px 20px 30px;
+    }
+}
+
+/* Mobile Landscape and Small Tablets (480px - 600px) */
+@media (max-width: 600px) {
+    /* Navigation */
+    .logo {
+        font-size: 20px;
+    }
+    
+    .logo i {
+        font-size: 24px;
+    }
+    
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+    }
+    
+    .nav-links a {
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+    }
+    
+    .btn-nav {
+        width: 100%;
+    }
+    
+    /* Hero */
+    .hero {
+        padding: 60px 16px 40px;
+    }
+    
+    .hero-badge {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+    
+    .hero-content h1 {
+        font-size: 32px;
+        line-height: 1.2;
+    }
+    
+    .hero-content p {
+        font-size: 16px;
+        margin-bottom: 32px;
+    }
+    
+    .hero-buttons {
+        gap: 10px;
+    }
+    
+    .btn-primary-large, .btn-secondary-large {
+        padding: 12px 24px;
+        font-size: 14px;
+    }
+    
+    .hero-stats {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+    }
+    
+    .stat-item {
+        font-size: 14px;
+    }
+    
+    /* Features */
+    .features {
+        padding: 50px 16px;
+    }
+    
+    .section-badge {
+        font-size: 12px;
+        padding: 6px 16px;
+    }
+    
+    .section-header h2 {
+        font-size: 28px;
+    }
+    
+    .section-header p {
+        font-size: 14px;
+    }
+    
+    .features-grid {
+        gap: 20px;
+    }
+    
+    .feature-card {
+        padding: 24px;
+    }
+    
+    .feature-icon {
+        width: 56px;
+        height: 56px;
+        margin-bottom: 20px;
+    }
+    
+    .feature-icon i {
+        font-size: 24px;
+    }
+    
+    .feature-card h3 {
+        font-size: 18px;
+    }
+    
+    .feature-card p {
+        font-size: 14px;
+    }
+    
+    /* About */
+    .about {
+        padding: 50px 16px;
+    }
+    
+    .about-text h2 {
+        font-size: 28px;
+    }
+    
+    .about-text p {
+        font-size: 15px;
+    }
+    
+    .about-list li {
+        font-size: 15px;
+    }
+    
+    .stat-card {
+        padding: 24px;
+    }
+    
+    .stat-icon {
+        font-size: 32px;
+    }
+    
+    .stat-number {
+        font-size: 40px;
+    }
+    
+    .stat-label {
+        font-size: 14px;
+    }
+    
+    /* CTA */
+    .cta {
+        padding: 50px 16px;
+    }
+    
+    .cta h2 {
+        font-size: 28px;
+    }
+    
+    .cta p {
+        font-size: 16px;
+    }
+    
+    /* Footer */
+    footer {
+        padding: 50px 16px 20px;
+    }
+    
+    .footer-logo {
+        font-size: 20px;
+    }
+    
+    .footer-logo i {
+        font-size: 24px;
+    }
+    
+    .footer-section h4 {
+        font-size: 16px;
+    }
+    
+    .footer-section p,
+    .footer-section a {
+        font-size: 14px;
+    }
+}
+
+/* Extra Small Mobile (360px - 480px) */
+@media (max-width: 480px) {
+    /* Hero */
+    .hero-content h1 {
+        font-size: 28px;
+    }
+    
+    .hero-content p {
+        font-size: 15px;
+    }
+    
+    .btn-primary-large, .btn-secondary-large {
+        padding: 12px 20px;
+        font-size: 13px;
+    }
+    
+    /* Features */
+    .section-header h2 {
+        font-size: 24px;
+    }
+    
+    .feature-card {
+        padding: 20px;
+    }
+    
+    .feature-card h3 {
+        font-size: 16px;
+    }
+    
+    /* About */
+    .about-text h2 {
+        font-size: 24px;
+    }
+    
+    .stat-number {
+        font-size: 36px;
+    }
+    
+    /* CTA */
+    .cta h2 {
+        font-size: 24px;
+    }
+}
+
+/* Extra Extra Small Mobile (≤360px) */
+@media (max-width: 360px) {
+    .hero-content h1 {
+        font-size: 24px;
+    }
+    
+    .hero-content p {
+        font-size: 14px;
+    }
+    
+    .section-header h2 {
+        font-size: 22px;
+    }
+    
+    .feature-card h3 {
+        font-size: 15px;
+    }
+    
+    .about-text h2,
+    .cta h2 {
+        font-size: 22px;
+    }
+}
+
+/* Landscape Orientation */
+@media (max-height: 600px) and (orientation: landscape) {
+    .hero {
+        padding: 40px 20px;
+    }
+    
+    .hero-content h1 {
+        font-size: 32px;
+    }
+    
+    .features,
+    .about,
+    .cta {
+        padding: 40px 20px;
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets */
+    .nav-links a,
+    .btn-nav,
+    .btn-primary-large,
+    .btn-secondary-large {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Remove hover effects on touch devices */
+    .feature-card:hover,
+    .stat-card:hover {
+        transform: none;
+    }
+    
+    .nav-links a:not(.btn-nav)::after {
+        display: none;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .navbar,
+    .hero-buttons,
+    .cta,
+    .modal {
+        display: none !important;
+    }
+    
+    .hero,
+    .features,
+    .about {
+        page-break-inside: avoid;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .feature-card,
+    .stat-card {
+        border: 2px solid currentColor;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .preview-card {
+        animation: none !important;
     }
 }
 
@@ -997,4 +1419,97 @@ footer {
 .switch-auth a:hover {
     color: var(--primary-dark);
     text-decoration: underline;
+}
+
+
+/* ==================== MOBILE ENHANCEMENTS ==================== */
+
+/* Prevent horizontal scroll */
+@media (max-width: 768px) {
+    body {
+        overflow-x: hidden;
+    }
+    
+    .navbar,
+    .hero,
+    .features,
+    .about,
+    .cta,
+    footer {
+        overflow-x: hidden;
+    }
+}
+
+/* Improve modal on mobile */
+@media (max-width: 600px) {
+    .modal-content {
+        width: 95%;
+        max-width: 95%;
+        margin: 10% auto;
+        padding: 0;
+    }
+    
+    .modal-header {
+        padding: 20px 16px;
+    }
+    
+    .modal-header h2 {
+        font-size: 20px;
+    }
+    
+    .modal-header p {
+        font-size: 13px;
+    }
+    
+    .modal-body {
+        padding: 20px 16px;
+    }
+    
+    .modal-body input {
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+    
+    .modal-body button {
+        padding: 12px 20px;
+        font-size: 14px;
+    }
+    
+    .close {
+        font-size: 28px;
+        right: 16px;
+        top: 16px;
+    }
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Better touch scrolling */
+body {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent text selection during interactions */
+.btn-primary-large,
+.btn-secondary-large,
+.btn-nav {
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+/* Focus visible for accessibility */
+*:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Optimize images for mobile */
+@media (max-width: 768px) {
+    img {
+        max-width: 100%;
+        height: auto;
+    }
 }

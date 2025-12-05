@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Container Examples</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="button-container-styles.css">
+    <style>
+        body {
+            background: #f8fafc;
+            padding: 40px 20px;
+        }
+        .example {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .example h2 {
+            color: #6366f1;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .example p {
+            color: #64748b;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Example 1: Three Buttons (Features, About, Get Started) -->
+    <div class="example">
+        <h2>Example 1: Three Buttons</h2>
+        <p>Features, About, and Get Started - Equal width with 10px gap</p>
+        
+        <div class="button-container">
+            <a href="#features" class="btn btn-secondary">
+                <i class="fas fa-star"></i>
+                <span>Features</span>
+            </a>
+            <a href="#about" class="btn btn-secondary">
+                <i class="fas fa-info-circle"></i>
+                <span>About</span>
+            </a>
+            <a href="#get-started" class="btn btn-primary">
+                <i class="fas fa-arrow-right"></i>
+                <span>Get Started</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Example 2: Two Buttons (50% each) -->
+    <div class="example">
+        <h2>Example 2: Two Buttons (50% Each)</h2>
+        <p>Features and About - Each takes 50% width</p>
+        
+        <div class="button-container-two">
+            <a href="#features" class="btn btn-secondary">
+                <i class="fas fa-star"></i>
+                <span>Features</span>
+            </a>
+            <a href="#about" class="btn btn-secondary">
+                <i class="fas fa-info-circle"></i>
+                <span>About</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Example 3: Grid Layout -->
+    <div class="example">
+        <h2>Example 3: Grid Layout</h2>
+        <p>Using CSS Grid instead of Flexbox</p>
+        
+        <div class="button-container-grid">
+            <a href="#features" class="btn btn-secondary">
+                <i class="fas fa-star"></i>
+                <span>Features</span>
+            </a>
+            <a href="#about" class="btn btn-secondary">
+                <i class="fas fa-info-circle"></i>
+                <span>About</span>
+            </a>
+            <a href="#get-started" class="btn btn-primary">
+                <i class="fas fa-arrow-right"></i>
+                <span>Get Started</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Example 4: With Different Icons -->
+    <div class="example">
+        <h2>Example 4: Custom Icons</h2>
+        <p>Same layout with different icon styles</p>
+        
+        <div class="button-container">
+            <button class="btn btn-secondary">
+                <i class="fas fa-list-check"></i>
+                <span>Features</span>
+            </button>
+            <button class="btn btn-secondary">
+                <i class="fas fa-users"></i>
+                <span>About</span>
+            </button>
+            <button class="btn btn-primary">
+                <i class="fas fa-rocket"></i>
+                <span>Get Started</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Example 5: Minimal (No Icons) -->
+    <div class="example">
+        <h2>Example 5: Minimal Style</h2>
+        <p>Clean buttons without icons</p>
+        
+        <div class="button-container">
+            <a href="#features" class="btn btn-secondary">
+                <span>Features</span>
+            </a>
+            <a href="#about" class="btn btn-secondary">
+                <span>About</span>
+            </a>
+            <a href="#get-started" class="btn btn-primary">
+                <span>Get Started</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Example 6: Mobile Preview -->
+    <div class="example" style="max-width: 400px; margin: 0 auto 40px;">
+        <h2>Example 6: Mobile View</h2>
+        <p>How it looks on mobile (stacked)</p>
+        
+        <div class="button-container" style="flex-direction: column;">
+            <a href="#features" class="btn btn-secondary" style="width: 100%; max-width: 100%;">
+                <i class="fas fa-star"></i>
+                <span>Features</span>
+            </a>
+            <a href="#about" class="btn btn-secondary" style="width: 100%; max-width: 100%;">
+                <i class="fas fa-info-circle"></i>
+                <span>About</span>
+            </a>
+            <a href="#get-started" class="btn btn-primary" style="width: 100%; max-width: 100%;">
+                <i class="fas fa-arrow-right"></i>
+                <span>Get Started</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

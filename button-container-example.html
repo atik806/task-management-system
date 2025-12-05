@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow - Button Container</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f5f5f5;
+            padding: 40px 20px;
+        }
+
+        /* Button Container */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Button Base Styles */
+        .btn {
+            flex: 1;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        /* Primary Button (Get Started) */
+        .btn-primary {
+            background: #6366f1;
+            color: white;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Secondary Buttons (Features, About) */
+        .btn-secondary {
+            background: #8b5cf6;
+            color: white;
+            box-shadow: 0 4px 14px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: #7c3aed;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Icon */
+        .btn i {
+            font-size: 20px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .button-container {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* Demo Container */
+        .demo-section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #6366f1;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-section">
+        <h1>TaskFlow Button Container</h1>
+        
+        <!-- Button Container -->
+        <div class="button-container">
+            <a href="#features" class="btn btn-secondary">
+                <i>📋</i>
+                <span>Features</span>
+            </a>
+            <a href="#about" class="btn btn-secondary">
+                <i>ℹ️</i>
+                <span>About</span>
+            </a>
+            <a href="#get-started" class="btn btn-primary">
+                <i>→</i>
+                <span>Get Started</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
