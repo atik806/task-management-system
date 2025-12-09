@@ -1,0 +1,448 @@
+/* ==================== WORKSPACE INVITATION STYLES ==================== */
+
+/* Notification Badge */
+.notification-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--danger);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.nav-item {
+    position: relative;
+}
+
+/* Invitations Modal */
+.invitations-header {
+    margin-bottom: 24px;
+}
+
+.invitations-subtitle {
+    color: var(--gray);
+    font-size: 14px;
+    margin: 0;
+}
+
+.invitations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* Invitation Card */
+.invitation-card {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s;
+}
+
+.invitation-card:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.invitation-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.invitation-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.invitation-info {
+    flex: 1;
+}
+
+.invitation-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 4px;
+}
+
+.invitation-from {
+    font-size: 13px;
+    color: var(--gray);
+}
+
+.invitation-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.invitation-workspace,
+.invitation-role,
+.invitation-date {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--dark);
+}
+
+.invitation-workspace i,
+.invitation-role i,
+.invitation-date i {
+    color: var(--primary);
+    width: 20px;
+}
+
+.invitation-workspace {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.invitation-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-accept,
+.btn-reject {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.btn-accept {
+    background: var(--success);
+    color: white;
+}
+
+.btn-accept:hover {
+    background: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-reject {
+    background: transparent;
+    color: var(--danger);
+    border: 2px solid var(--danger);
+}
+
+.btn-reject:hover {
+    background: var(--danger);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Empty State */
+.empty-invitations {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--gray);
+}
+
+.empty-invitations i {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.empty-invitations p {
+    font-size: 16px;
+    margin: 0;
+}
+
+/* Toast Notifications */
+.invitation-toast {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--primary);
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 400px;
+    z-index: 10000;
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.invitation-toast.fade-out {
+    animation: slideOutRight 0.3s ease;
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+}
+
+.toast-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.toast-content {
+    flex: 1;
+}
+
+.toast-title {
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.toast-message {
+    font-size: 13px;
+    color: var(--gray);
+    line-height: 1.4;
+}
+
+.toast-close {
+    background: transparent;
+    border: none;
+    color: var(--gray);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+
+.toast-close:hover {
+    background: var(--bg-primary);
+    color: var(--dark);
+}
+
+/* Success Toast */
+.success-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--success);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 10000;
+    animation: slideInUp 0.3s ease;
+    font-weight: 500;
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.success-toast.fade-out {
+    animation: slideOutDown 0.3s ease;
+}
+
+@keyframes slideOutDown {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+}
+
+.success-toast i {
+    font-size: 20px;
+}
+
+/* Invite Section in Workspace Settings */
+.invite-section {
+    margin-bottom: 32px;
+    padding: 20px;
+    background: var(--bg-primary);
+    border-radius: 8px;
+}
+
+.invite-section h4 {
+    margin-bottom: 16px;
+    color: var(--dark);
+    font-size: 16px;
+}
+
+.invite-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.invite-form .form-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.invite-form .form-group {
+    margin-bottom: 0;
+}
+
+.invite-form input,
+.invite-form select {
+    width: 100%;
+}
+
+.invite-form button {
+    white-space: nowrap;
+}
+
+/* Dark Mode */
+body.dark-mode .invitation-card {
+    background: var(--bg-secondary);
+    border-color: var(--border);
+}
+
+body.dark-mode .invitation-toast {
+    background: var(--bg-secondary);
+    border-color: var(--primary);
+}
+
+body.dark-mode .invite-section {
+    background: var(--bg-secondary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .invitation-toast {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+
+    .invitation-actions {
+        flex-direction: column;
+    }
+
+    .btn-accept,
+    .btn-reject {
+        width: 100%;
+    }
+
+    .invite-form .form-row {
+        flex-direction: column;
+    }
+
+    .invite-form button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .invitation-card {
+        padding: 16px;
+    }
+
+    .invitation-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .invitation-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    .notification-badge {
+        top: 6px;
+        right: 6px;
+        font-size: 9px;
+        padding: 2px 5px;
+        min-width: 16px;
+        height: 16px;
+    }
+}
+
+
+/* Invitation Email Display */
+.invitation-email {
+    font-size: 12px;
+    color: var(--gray-light);
+    margin-top: 2px;
+}

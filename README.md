@@ -12,6 +12,10 @@ A full-stack task management application with drag-and-drop functionality, calen
 
 ### 🎯 Core Functionality
 - ✅ **User Authentication** - Secure login/register with email or Google
+- ✅ **Multi-User Workspaces** - Collaborate with team members in shared workspaces
+- ✅ **Role-Based Permissions** - Owner, Admin, and Member roles with different access levels
+- ✅ **Real-Time Collaboration** - See changes instantly as team members work
+- ✅ **Invite System** - Invite members via email with secure invite links
 - ✅ **Task Management** - Create, edit, delete, and organize tasks
 - ✅ **Drag & Drop** - Move tasks between categories with smooth animations
 - ✅ **Custom Categories** - Create unlimited custom task categories
@@ -38,6 +42,15 @@ A full-stack task management application with drag-and-drop functionality, calen
 - Word count and timestamps
 - Separate from tasks for better organization
 
+### 👥 Workspace Collaboration
+- **Create Workspaces** - Unlimited workspaces for different teams/projects
+- **Invite Members** - Send email invites with unique links
+- **Role Management** - Assign Owner, Admin, or Member roles
+- **Member Management** - Add, remove, and change member roles
+- **Workspace Switching** - Easily switch between workspaces
+- **Real-Time Sync** - All members see updates instantly
+- **Secure Access** - Role-based permissions and data isolation
+
 ---
 
 ## 🚀 Quick Start
@@ -47,6 +60,20 @@ A full-stack task management application with drag-and-drop functionality, calen
 - Python 3.x (for local server)
 - Firebase account (free tier works)
 - Modern web browser
+
+### 🏢 New: Multi-User Workspace System
+
+TaskFlow now supports team collaboration! See **[WORKSPACE-README.md](WORKSPACE-README.md)** for:
+- Complete workspace system documentation
+- Integration guide
+- Quick start for teams
+- Real-time collaboration features
+
+**Quick Links:**
+- 📖 [Workspace System Overview](WORKSPACE-README.md)
+- 🚀 [Quick Start Guide](WORKSPACE-QUICK-START.md)
+- ✅ [Integration Checklist](WORKSPACE-INTEGRATION-CHECKLIST.md)
+- 📚 [Complete Documentation](WORKSPACE-SYSTEM.md)
 
 ### Installation
 
@@ -256,22 +283,29 @@ A full-stack task management application with drag-and-drop functionality, calen
 
 ```
 taskflow/
-├── index.html                      # Main application page
-├── landing.html                    # Landing page
-├── app.js                          # Main application logic
-├── landing.js                      # Landing page logic
-├── styles.css                      # Application styles
-├── landing.css                     # Landing page styles
-├── server.py                       # Flask development server
-├── requirements.txt                # Python dependencies
-├── README.md                       # This file
-├── FIRESTORE-RULES.md             # Firestore security rules guide
-├── COMPLETE-FIRESTORE-RULES.txt   # Complete rules copy-paste
-├── NEW-FEATURES.md                # Feature documentation
-├── NOTES-GUIDE.md                 # Notes feature guide
-├── TROUBLESHOOTING.md             # Common issues and solutions
-├── QUICK-FIX.md                   # Quick fixes for common problems
-└── firebase-setup-guide.md        # Firebase setup instructions
+├── index.html                          # Main application page
+├── landing.html                        # Landing page
+├── app.js                              # Main application logic
+├── landing.js                          # Landing page logic
+├── workspace.js                        # Workspace system core
+├── workspace-ui-controller.js          # Workspace UI controller
+├── styles.css                          # Application styles
+├── landing.css                         # Landing page styles
+├── workspace-styles.css                # Workspace-specific styles
+├── workspace-ui.html                   # Workspace UI components
+├── server.py                           # Flask development server
+├── requirements.txt                    # Python dependencies
+├── README.md                           # This file
+├── WORKSPACE-SYSTEM.md                 # Workspace system documentation
+├── WORKSPACE-MIGRATION.md              # Migration guide
+├── firestore-workspace-rules.txt       # Workspace security rules
+├── FIRESTORE-RULES.md                  # Firestore security rules guide
+├── COMPLETE-FIRESTORE-RULES.txt        # Complete rules copy-paste
+├── NEW-FEATURES.md                     # Feature documentation
+├── NOTES-GUIDE.md                      # Notes feature guide
+├── TROUBLESHOOTING.md                  # Common issues and solutions
+├── QUICK-FIX.md                        # Quick fixes for common problems
+└── firebase-setup-guide.md             # Firebase setup instructions
 ```
 
 ---
@@ -412,23 +446,43 @@ For detailed solutions, see:
 
 ## 📚 Documentation
 
+### Core Documentation
+- **README.md** - Main documentation (this file)
+- **WORKSPACE-SYSTEM.md** - Complete workspace system guide
+- **WORKSPACE-MIGRATION.md** - Migration guide for existing apps
 - **NEW-FEATURES.md** - Dark mode, My Tasks, Calendar features
 - **NOTES-GUIDE.md** - Complete notes system guide
-- **FIRESTORE-RULES.md** - Security rules setup
+
+### Setup Guides
 - **firebase-setup-guide.md** - Firebase configuration
 - **firebase-google-auth-setup.md** - Google sign-in setup
+- **FIRESTORE-RULES.md** - Security rules setup
+- **firestore-workspace-rules.txt** - Workspace security rules
+
+### Troubleshooting
+- **TROUBLESHOOTING.md** - Common issues and solutions
+- **QUICK-FIX.md** - Quick fixes for common problems
 
 ---
 
 ## 🎯 Roadmap
+
+### ✅ Completed Features
+- [x] Multi-user workspace system
+- [x] Role-based permissions
+- [x] Real-time collaboration
+- [x] Invite system with email links
+- [x] Member management
+- [x] Workspace switching
 
 ### Upcoming Features
 - [ ] Task search and advanced filtering
 - [ ] Recurring tasks
 - [ ] Task templates
 - [ ] File attachments
-- [ ] Comments and notes on tasks
-- [ ] Team collaboration
+- [ ] Comments on tasks
+- [ ] Task assignments and mentions
+- [ ] Activity feed and notifications
 - [ ] Mobile app (React Native)
 - [ ] Desktop app (Electron)
 - [ ] Email notifications
@@ -442,6 +496,8 @@ For detailed solutions, see:
 - [ ] Task dependencies
 - [ ] Gantt chart view
 - [ ] API for integrations
+- [ ] Workspace templates
+- [ ] Custom workspace themes
 
 ---
 

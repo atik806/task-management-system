@@ -1,0 +1,83 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Simple rule: Allow authenticated users to read/write their own data
+    
+    // Tasks - users can access their own tasks
+    match /tasks/{taskId} {
+      allow read, write: if request.auth != null && 
+                            (resource.data.userId == request.auth.uid || 
+                             request.resource.data.userId == request.auth.uid);
+    }
+    
+    // Categories - users can access their own categories
+    match /categories/{categoryId} {
+      allow read, write: if request.auth != null && 
+                            (resource.data.userId == request.auth.uid || 
+                             request.resource.data.userId == request.auth.uid);
+    }
+    
+    // Notes - users can access their own notes
+    match /notes/{noteId} {
+      allow read, write: if request.auth != null && 
+                            (resource.data.userId == request.auth.uid || 
+                             request.resource.data.userId == request.auth.uid);
+    }
+    
+    // Invites - users can create and read invites
+    match /invites/{inviteId} {
+      // Anyone authenticated can create invites
+      allow create: if request.auth != null && 
+                       request.resource.data.invitedBy == request.auth.uid;
+      
+      // Users can read invites they sent or received
+      allow read: if request.auth != null && 
+                     (resource.data.invitedBy == request.auth.uid ||
+                      resource.data.invitedEmail == request.auth.token.email);
+      
+      // Users can update/delete their own invites
+      allow update, delete: if request.auth != null && 
+                               resource.data.invitedBy == request.auth.uid;
+    }
+    
+    // Workspace Invitations - Real-time notifications
+    match /workspaceInvitations/{invitationId} {
+      // Anyone can create workspace invitations
+      allow create: if request.auth != null && 
+                       request.resource.data.invitedBy == request.auth.uid;
+      
+      // Users can read invitations sent to them or by them
+      allow read: if request.auth != null && 
+                     (resource.data.invitedEmail == request.auth.token.email ||
+                      resource.data.invitedBy == request.auth.uid);
+      
+      // Invited users can update status (accept/reject)
+      // Inviter can also update or delete
+      allow update: if request.auth != null && 
+                       (resource.data.invitedEmail == request.auth.token.email ||
+                        resource.data.invitedBy == request.auth.uid);
+      
+      allow delete: if request.auth != null && 
+                       (resource.data.invitedBy == request.auth.uid ||
+                        resource.data.invitedEmail == request.auth.token.email);
+    }
+    
+    // Workspace collections (for future use)
+    match /workspaces/{workspaceId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    match /workspaceMembers/{memberId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    match /workspaceInvites/{inviteId} {
+      allow read, write: if request.auth != null;
+    }
+    
+    match /userWorkspaces/{userWorkspaceId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

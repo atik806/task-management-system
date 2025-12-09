@@ -1,0 +1,643 @@
+/* ==================== WORKSPACE STYLES ==================== */
+
+/* Workspace Selector */
+.workspace-selector {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+}
+
+.workspace-selector-btn {
+    width: 100%;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.3s;
+}
+
+.workspace-selector-btn:hover {
+    background: var(--border);
+}
+
+.workspace-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    text-align: left;
+}
+
+.workspace-info i {
+    font-size: 20px;
+    color: var(--primary);
+}
+
+.workspace-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.workspace-name {
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 14px;
+}
+
+.workspace-role {
+    font-size: 11px;
+    color: var(--gray);
+    text-transform: uppercase;
+}
+
+/* Workspace Dropdown */
+.workspace-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 20px;
+    right: 20px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    margin-top: 8px;
+    z-index: 1000;
+    display: none;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.workspace-dropdown.active {
+    display: block;
+}
+
+.workspace-dropdown-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.workspace-dropdown-header h4 {
+    font-size: 14px;
+    color: var(--dark);
+    font-weight: 600;
+}
+
+.workspace-list {
+    padding: 8px 0;
+}
+
+.workspace-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.workspace-item:hover {
+    background: var(--bg-primary);
+}
+
+.workspace-item.active {
+    background: rgba(99, 102, 241, 0.1);
+    border-left: 3px solid var(--primary);
+}
+
+.workspace-item-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.workspace-item-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.workspace-item-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.workspace-item-name {
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 14px;
+}
+
+.workspace-item-meta {
+    font-size: 11px;
+    color: var(--gray);
+}
+
+.workspace-dropdown-footer {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+}
+
+.btn-create-workspace {
+    width: 100%;
+    padding: 10px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s;
+}
+
+.btn-create-workspace:hover {
+    background: var(--primary-dark);
+}
+
+/* Workspace Indicator */
+.workspace-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: var(--bg-primary);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--gray);
+}
+
+.workspace-indicator i {
+    color: var(--primary);
+}
+
+/* Settings Tabs */
+.settings-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid var(--border);
+}
+
+.settings-tab {
+    padding: 12px 20px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--gray);
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: -2px;
+}
+
+.settings-tab:hover {
+    color: var(--primary);
+}
+
+.settings-tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+.settings-tab-content {
+    display: none;
+}
+
+.settings-tab-content.active {
+    display: block;
+}
+
+/* Members List */
+.members-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.members-header h4 {
+    font-size: 18px;
+    color: var(--dark);
+}
+
+.members-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.member-item {
+    background: var(--bg-primary);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.member-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+.member-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.member-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.member-name {
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 14px;
+}
+
+.member-email {
+    font-size: 12px;
+    color: var(--gray);
+}
+
+.member-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.role-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.role-badge.owner {
+    background: #fef3c7;
+    color: #f59e0b;
+}
+
+.role-badge.admin {
+    background: #dbeafe;
+    color: #3b82f6;
+}
+
+.role-badge.member {
+    background: #d1fae5;
+    color: #10b981;
+}
+
+.role-select {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12px;
+    background: var(--bg-secondary);
+    color: var(--dark);
+    cursor: pointer;
+}
+
+.btn-remove-member {
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s;
+}
+
+.btn-remove-member:hover {
+    background: var(--danger);
+    color: white;
+}
+
+/* Invites List */
+.invites-header {
+    margin-bottom: 20px;
+}
+
+.invites-header h4 {
+    font-size: 18px;
+    color: var(--dark);
+}
+
+.invites-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.invite-item {
+    background: var(--bg-primary);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.invite-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.invite-email {
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 14px;
+}
+
+.invite-meta {
+    font-size: 12px;
+    color: var(--gray);
+}
+
+.invite-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-copy-invite {
+    padding: 6px 12px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s;
+}
+
+.btn-copy-invite:hover {
+    background: var(--primary-dark);
+}
+
+.btn-cancel-invite {
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--gray);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s;
+}
+
+.btn-cancel-invite:hover {
+    background: var(--bg-primary);
+}
+
+/* Invite Link Container */
+.invite-link-container {
+    margin-top: 20px;
+    padding: 16px;
+    background: var(--bg-primary);
+    border-radius: 8px;
+}
+
+.invite-link-container label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 14px;
+}
+
+.invite-link-box {
+    display: flex;
+    gap: 8px;
+}
+
+.invite-link-box input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    background: var(--bg-secondary);
+    color: var(--dark);
+}
+
+.help-text {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--gray);
+}
+
+/* Info Box */
+.info-box {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(99, 102, 241, 0.1);
+    border-left: 3px solid var(--primary);
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.info-box i {
+    color: var(--primary);
+    font-size: 18px;
+}
+
+.info-box p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--dark);
+    line-height: 1.5;
+}
+
+/* Danger Zone */
+.danger-zone {
+    margin-top: 32px;
+    padding: 20px;
+    border: 2px solid var(--danger);
+    border-radius: 8px;
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.danger-zone h4 {
+    color: var(--danger);
+    margin-bottom: 16px;
+    font-size: 16px;
+}
+
+.btn-danger {
+    padding: 10px 20px;
+    background: transparent;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 12px;
+}
+
+.btn-danger:hover {
+    background: var(--danger);
+    color: white;
+}
+
+/* Empty States */
+.empty-members {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--gray);
+}
+
+.empty-members i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.empty-invites {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--gray);
+}
+
+.empty-invites i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+/* Responsive Workspace Styles */
+@media (max-width: 768px) {
+    .workspace-selector {
+        padding: 12px 10px;
+    }
+
+    .workspace-dropdown {
+        left: 10px;
+        right: 10px;
+    }
+
+    .member-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .member-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .invite-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .invite-actions {
+        width: 100%;
+    }
+
+    .invite-actions button {
+        flex: 1;
+    }
+
+    .settings-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+    }
+
+    .settings-tab {
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 600px) {
+    .workspace-selector-btn {
+        padding: 10px;
+    }
+
+    .workspace-name {
+        font-size: 13px;
+    }
+
+    .workspace-role {
+        font-size: 10px;
+    }
+
+    .member-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+
+    .invite-link-box {
+        flex-direction: column;
+    }
+
+    .invite-link-box button {
+        width: 100%;
+    }
+}
+
+/* Dark Mode Workspace Styles */
+body.dark-mode .workspace-selector-btn {
+    background: var(--bg-secondary);
+}
+
+body.dark-mode .workspace-dropdown {
+    background: var(--bg-secondary);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .member-item,
+body.dark-mode .invite-item {
+    background: var(--bg-secondary);
+}
+
+body.dark-mode .info-box {
+    background: rgba(99, 102, 241, 0.2);
+}
+
+body.dark-mode .danger-zone {
+    background: rgba(239, 68, 68, 0.1);
+}

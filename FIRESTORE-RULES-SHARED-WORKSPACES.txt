@@ -1,0 +1,134 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ==================== USER PROFILES ====================
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // ==================== PERSONAL TASKS ====================
+    match /tasks/{taskId} {
+      allow read, write: if request.auth != null && 
+                            request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.userId;
+    }
+    
+    // ==================== PERSONAL NOTES ====================
+    match /notes/{noteId} {
+      allow read, write: if request.auth != null && 
+                            request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.userId;
+    }
+    
+    // ==================== PERSONAL CATEGORIES ====================
+    match /categories/{categoryId} {
+      allow read, write: if request.auth != null && 
+                            request.auth.uid == resource.data.userId;
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.userId;
+    }
+    
+    // ==================== WORKSPACE INVITATIONS ====================
+    match /workspaceInvitations/{invitationId} {
+      // Anyone can read invitations sent to them
+      allow read: if request.auth != null && 
+                     (request.auth.uid == resource.data.invitedBy || 
+                      request.auth.email == resource.data.invitedEmail);
+      
+      // Only authenticated users can create invitations
+      allow create: if request.auth != null && 
+                       request.auth.uid == request.resource.data.invitedBy;
+      
+      // Only the inviter or invitee can update (accept/reject)
+      allow update: if request.auth != null && 
+                       (request.auth.uid == resource.data.invitedBy || 
+                        request.auth.email == resource.data.invitedEmail);
+      
+      // Only the inviter can delete
+      allow delete: if request.auth != null && 
+                       request.auth.uid == resource.data.invitedBy;
+    }
+    
+    // ==================== SHARED WORKSPACES ====================
+    match /sharedWorkspaces/{workspaceId} {
+      // Members can read their workspaces
+      allow read: if request.auth != null && 
+                     request.auth.uid in resource.data.members;
+      
+      // Any authenticated user can create a workspace
+      allow create: if request.auth != null;
+      
+      // Members can update workspace
+      allow update: if request.auth != null && 
+                       request.auth.uid in resource.data.members;
+      
+      // Only creator can delete workspace
+      allow delete: if request.auth != null && 
+                       request.auth.uid == resource.data.created_by;
+    }
+    
+    // ==================== USER SHARED WORKSPACE MEMBERSHIPS ====================
+    match /userSharedWorkspaces/{membershipId} {
+      // Users can read their own memberships
+      allow read: if request.auth != null && 
+                     request.auth.uid == resource.data.user_id;
+      
+      // System can create memberships (during workspace creation)
+      allow create: if request.auth != null;
+      
+      // Users can update their own membership (e.g., last_accessed)
+      allow update: if request.auth != null && 
+                       request.auth.uid == resource.data.user_id;
+      
+      // Users can delete their own membership (leave workspace)
+      allow delete: if request.auth != null && 
+                       request.auth.uid == resource.data.user_id;
+    }
+    
+    // ==================== SHARED TASKS ====================
+    match /sharedTasks/{taskId} {
+      // Helper function to check workspace membership
+      function isWorkspaceMember(workspaceId) {
+        return exists(/databases/$(database)/documents/userSharedWorkspaces/$(request.auth.uid + '_' + workspaceId));
+      }
+      
+      // Members can read tasks in their workspaces
+      allow read: if request.auth != null && 
+                     isWorkspaceMember(resource.data.workspace_id);
+      
+      // Members can create tasks in their workspaces
+      allow create: if request.auth != null && 
+                       isWorkspaceMember(request.resource.data.workspace_id) &&
+                       request.auth.uid == request.resource.data.created_by;
+      
+      // Members can update and delete tasks in their workspaces
+      allow update, delete: if request.auth != null && 
+                               isWorkspaceMember(resource.data.workspace_id);
+    }
+    
+    // ==================== SHARED NOTES ====================
+    match /sharedNotes/{noteId} {
+      // Helper function to check workspace membership
+      function isWorkspaceMember(workspaceId) {
+        return exists(/databases/$(database)/documents/userSharedWorkspaces/$(request.auth.uid + '_' + workspaceId));
+      }
+      
+      // Members can read notes in their workspaces
+      allow read: if request.auth != null && 
+                     isWorkspaceMember(resource.data.workspace_id);
+      
+      // Members can create notes in their workspaces
+      allow create: if request.auth != null && 
+                       isWorkspaceMember(request.resource.data.workspace_id) &&
+                       request.auth.uid == request.resource.data.created_by;
+      
+      // Members can update and delete notes in their workspaces
+      allow update, delete: if request.auth != null && 
+                               isWorkspaceMember(resource.data.workspace_id);
+    }
+  }
+}

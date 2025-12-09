@@ -1,0 +1,221 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ==================== HELPER FUNCTIONS ====================
+    
+    // Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Get user ID
+    function getUserId() {
+      return request.auth.uid;
+    }
+    
+    // Check if user is member of workspace
+    function isMemberOfWorkspace(workspaceId) {
+      return exists(/databases/$(database)/documents/workspaceMembers/$(workspaceId + '_' + getUserId()));
+    }
+    
+    // Get user's role in workspace
+    function getUserRole(workspaceId) {
+      return get(/databases/$(database)/documents/workspaceMembers/$(workspaceId + '_' + getUserId())).data.role;
+    }
+    
+    // Check if user is owner
+    function isOwner(workspaceId) {
+      return isMemberOfWorkspace(workspaceId) && getUserRole(workspaceId) == 'owner';
+    }
+    
+    // Check if user is admin or owner
+    function isAdminOrOwner(workspaceId) {
+      return isMemberOfWorkspace(workspaceId) && 
+             (getUserRole(workspaceId) == 'admin' || getUserRole(workspaceId) == 'owner');
+    }
+    
+    // Check if user has any role in workspace
+    function hasWorkspaceAccess(workspaceId) {
+      return isMemberOfWorkspace(workspaceId) && 
+             get(/databases/$(database)/documents/workspaceMembers/$(workspaceId + '_' + getUserId())).data.status == 'active';
+    }
+    
+    // ==================== WORKSPACES ====================
+    
+    match /workspaces/{workspaceId} {
+      // Anyone authenticated can create a workspace
+      allow create: if isAuthenticated() && 
+                       request.resource.data.ownerId == getUserId();
+      
+      // Members can read workspace details
+      allow read: if isAuthenticated() && hasWorkspaceAccess(workspaceId);
+      
+      // Only owner can update workspace settings
+      allow update: if isAuthenticated() && isOwner(workspaceId);
+      
+      // Only owner can delete workspace
+      allow delete: if isAuthenticated() && isOwner(workspaceId);
+    }
+    
+    // ==================== WORKSPACE MEMBERS ====================
+    
+    match /workspaceMembers/{memberId} {
+      // Allow reading if user is member of the workspace
+      allow read: if isAuthenticated() && 
+                     (hasWorkspaceAccess(resource.data.workspaceId) || 
+                      resource.data.userId == getUserId());
+      
+      // Owner and admins can add members
+      allow create: if isAuthenticated() && 
+                       (isAdminOrOwner(request.resource.data.workspaceId) ||
+                        // Allow user to accept invite
+                        request.resource.data.userId == getUserId());
+      
+      // Owner and admins can update member roles (except owner role)
+      allow update: if isAuthenticated() && 
+                       (isAdminOrOwner(resource.data.workspaceId) && 
+                        resource.data.role != 'owner' &&
+                        request.resource.data.role != 'owner') ||
+                       // Allow user to update their own lastAccessed
+                       (resource.data.userId == getUserId() && 
+                        request.resource.data.role == resource.data.role);
+      
+      // Owner and admins can remove members (except owner)
+      // Members can remove themselves
+      allow delete: if isAuthenticated() && 
+                       ((isAdminOrOwner(resource.data.workspaceId) && 
+                         resource.data.role != 'owner') ||
+                        resource.data.userId == getUserId());
+    }
+    
+    // ==================== WORKSPACE INVITES ====================
+    
+    match /workspaceInvites/{inviteId} {
+      // Members of workspace can read invites
+      allow read: if isAuthenticated() && 
+                     (hasWorkspaceAccess(resource.data.workspaceId) ||
+                      resource.data.invitedEmail == request.auth.token.email);
+      
+      // Admins and owners can create invites
+      allow create: if isAuthenticated() && 
+                       isAdminOrOwner(request.resource.data.workspaceId) &&
+                       request.resource.data.invitedBy == getUserId();
+      
+      // Invited user can update status to accepted
+      // Inviter can update or delete
+      allow update: if isAuthenticated() && 
+                       (resource.data.invitedEmail == request.auth.token.email ||
+                        isAdminOrOwner(resource.data.workspaceId));
+      
+      allow delete: if isAuthenticated() && 
+                       isAdminOrOwner(resource.data.workspaceId);
+    }
+    
+    // ==================== USER WORKSPACES ====================
+    
+    match /userWorkspaces/{userWorkspaceId} {
+      // Users can read their own workspace list
+      allow read: if isAuthenticated() && resource.data.userId == getUserId();
+      
+      // Users can create their own workspace entries
+      allow create: if isAuthenticated() && request.resource.data.userId == getUserId();
+      
+      // Users can update their own workspace preferences
+      allow update: if isAuthenticated() && resource.data.userId == getUserId();
+      
+      // Users can remove themselves from workspaces
+      allow delete: if isAuthenticated() && resource.data.userId == getUserId();
+    }
+    
+    // ==================== TASKS ====================
+    
+    match /tasks/{taskId} {
+      // Members can read tasks in their workspaces
+      allow read: if isAuthenticated() && 
+                     hasWorkspaceAccess(resource.data.workspaceId);
+      
+      // Members can create tasks in their workspaces
+      allow create: if isAuthenticated() && 
+                       hasWorkspaceAccess(request.resource.data.workspaceId) &&
+                       request.resource.data.createdBy == getUserId();
+      
+      // Members can update tasks in their workspaces
+      // Admins and owners can update any task
+      allow update: if isAuthenticated() && 
+                       hasWorkspaceAccess(resource.data.workspaceId) &&
+                       (resource.data.createdBy == getUserId() || 
+                        isAdminOrOwner(resource.data.workspaceId));
+      
+      // Task creator, admins, and owners can delete tasks
+      allow delete: if isAuthenticated() && 
+                       hasWorkspaceAccess(resource.data.workspaceId) &&
+                       (resource.data.createdBy == getUserId() || 
+                        isAdminOrOwner(resource.data.workspaceId));
+    }
+    
+    // ==================== CATEGORIES ====================
+    
+    match /categories/{categoryId} {
+      // Members can read categories in their workspaces
+      allow read: if isAuthenticated() && 
+                     hasWorkspaceAccess(resource.data.workspaceId);
+      
+      // Members can create categories in their workspaces
+      allow create: if isAuthenticated() && 
+                       hasWorkspaceAccess(request.resource.data.workspaceId) &&
+                       request.resource.data.createdBy == getUserId();
+      
+      // Admins and owners can update categories
+      allow update: if isAuthenticated() && 
+                       hasWorkspaceAccess(resource.data.workspaceId) &&
+                       isAdminOrOwner(resource.data.workspaceId);
+      
+      // Admins and owners can delete custom categories
+      allow delete: if isAuthenticated() && 
+                       hasWorkspaceAccess(resource.data.workspaceId) &&
+                       isAdminOrOwner(resource.data.workspaceId) &&
+                       resource.data.isDefault != true;
+    }
+    
+    // ==================== NOTES ====================
+    
+    match /notes/{noteId} {
+      // Members can read notes in their workspaces
+      allow read: if isAuthenticated() && 
+                     hasWorkspaceAccess(resource.data.workspaceId);
+      
+      // Members can create notes in their workspaces
+      allow create: if isAuthenticated() && 
+                       hasWorkspaceAccess(request.resource.data.workspaceId) &&
+                       request.resource.data.createdBy == getUserId();
+      
+      // Note creator, admins, and owners can update notes
+      allow update: if isAuthenticated() && 
+                       hasWorkspaceAccess(resource.data.workspaceId) &&
+                       (resource.data.createdBy == getUserId() || 
+                        isAdminOrOwner(resource.data.workspaceId));
+      
+      // Note creator, admins, and owners can delete notes
+      allow delete: if isAuthenticated() && 
+                       hasWorkspaceAccess(resource.data.workspaceId) &&
+                       (resource.data.createdBy == getUserId() || 
+                        isAdminOrOwner(resource.data.workspaceId));
+    }
+    
+    // ==================== ACTIVITY LOG (Optional) ====================
+    
+    match /workspaceActivity/{activityId} {
+      // Members can read activity in their workspaces
+      allow read: if isAuthenticated() && 
+                     hasWorkspaceAccess(resource.data.workspaceId);
+      
+      // System can create activity logs
+      allow create: if isAuthenticated() && 
+                       hasWorkspaceAccess(request.resource.data.workspaceId);
+      
+      // No updates or deletes allowed
+      allow update, delete: if false;
+    }
+  }
+}

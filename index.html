@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TaskFlow - Task Management Dashboard</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="workspace-invitations-styles.css">
+    <link rel="stylesheet" href="shared-workspace-styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
@@ -33,7 +35,37 @@
                     <i class="fas fa-sticky-note"></i>
                     <span>Notes</span>
                 </a>
+                <a href="#" class="nav-item" id="inviteUserNav">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Invite User</span>
+                </a>
+                <a href="#" class="nav-item" id="invitationsBtn">
+                    <i class="fas fa-envelope"></i>
+                    <span>Invitations</span>
+                    <span class="notification-badge" id="invitationBadge" style="display: none;">0</span>
+                </a>
+                <a href="#" class="nav-item" id="sharedWorkspacesNav">
+                    <i class="fas fa-users"></i>
+                    <span>Shared Workspaces</span>
+                    <span class="workspace-count" id="sharedWorkspaceCount" style="display: none;">0</span>
+                </a>
             </nav>
+            
+            <!-- Workspace Switcher -->
+            <div class="workspace-switcher" id="sharedModeToggle" style="display: none;">
+                <div class="switcher-header">
+                    <h4>Workspaces</h4>
+                </div>
+                <div class="workspace-options">
+                    <button class="workspace-option active" id="personalWorkspaceBtn">
+                        <i class="fas fa-user"></i>
+                        <span>Personal</span>
+                    </button>
+                    <div id="sharedWorkspacesList" class="shared-workspaces-list">
+                        <!-- Shared workspaces will be rendered here -->
+                    </div>
+                </div>
+            </div>
             <div class="sidebar-footer">
                 <button id="themeToggle" class="btn-theme">
                     <i class="fas fa-moon"></i>
@@ -73,6 +105,11 @@
                             <i class="fas fa-folder-plus"></i>
                             <span>Add Category</span>
                         </button>
+                        <!-- Workspace Indicator -->
+                        <div class="workspace-indicator" id="workspaceIndicator">
+                            <i class="fas fa-user"></i>
+                            <span>Personal Workspace</span>
+                        </div>
                     </div>
                 </div>
                 <div class="board-container">
@@ -303,7 +340,152 @@
         </div>
     </div>
 
+    <!-- Invite User Modal -->
+    <div id="inviteUserModal" class="modal">
+        <div class="modal-content modal-medium">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Invite User to Collaborate</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="inviteUserForm">
+                    <div class="form-group">
+                        <label for="inviteEmail">Email Address *</label>
+                        <input type="email" id="inviteEmail" placeholder="colleague@example.com" required />
+                        <p class="help-text">Enter the email address of the person you want to invite</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="inviteMessage">Personal Message (optional)</label>
+                        <textarea id="inviteMessage" placeholder="Add a personal message..." rows="3"></textarea>
+                    </div>
+                    <div class="info-box">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <p><strong>What happens next?</strong></p>
+                            <p>The invited user will receive an email with instructions to join TaskFlow and collaborate with you on tasks.</p>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-cancel" id="cancelInviteBtn">Cancel</button>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-paper-plane"></i> Send Invite
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workspace Invitations Modal -->
+    <div id="invitationsModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3><i class="fas fa-envelope"></i> Workspace Invitations</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="invitations-header">
+                    <p class="invitations-subtitle">Review and respond to workspace invitations</p>
+                </div>
+                <div id="invitationsList" class="invitations-list">
+                    <!-- Invitations will be rendered here by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shared Workspace Management Modal -->
+    <div id="sharedWorkspaceModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3><i class="fas fa-users"></i> Shared Workspaces</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="shared-workspaces-tabs">
+                    <button class="tab-btn active" data-tab="my-shared">
+                        <i class="fas fa-users"></i> My Shared Workspaces
+                    </button>
+                </div>
+                
+                <div id="mySharedTab" class="tab-content active">
+                    <div class="shared-workspaces-header">
+                        <p>Workspaces you're collaborating in</p>
+                    </div>
+                    <div id="mySharedWorkspacesList" class="shared-workspaces-grid">
+                        <!-- Shared workspaces will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shared Workspace Settings Modal -->
+    <div id="sharedWorkspaceSettingsModal" class="modal">
+        <div class="modal-content modal-medium">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> Workspace Settings</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="workspace-info">
+                    <div class="workspace-avatar">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="workspace-details">
+                        <h4 id="settingsWorkspaceName">Workspace Name</h4>
+                        <p id="settingsWorkspaceMembers">2 members</p>
+                    </div>
+                </div>
+                
+                <div class="workspace-actions">
+                    <div class="action-group">
+                        <h5>Members</h5>
+                        <div id="workspaceMembersList" class="members-list">
+                            <!-- Members will be rendered here -->
+                        </div>
+                    </div>
+                    
+                    <div class="action-group danger-zone">
+                        <h5>Danger Zone</h5>
+                        <button id="leaveWorkspaceBtn" class="btn-danger">
+                            <i class="fas fa-sign-out-alt"></i> Leave Workspace
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Move to Workspace Modal -->
+    <div id="moveToWorkspaceModal" class="modal">
+        <div class="modal-content modal-medium">
+            <div class="modal-header">
+                <h3><i class="fas fa-share-alt"></i> Move Task to Shared Workspace</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="move-task-info">
+                    <p>Select a shared workspace to move this task to:</p>
+                    <div class="task-preview" id="moveTaskPreview">
+                        <!-- Task preview will be shown here -->
+                    </div>
+                </div>
+                <div id="workspaceSelectionList" class="workspace-selection-list">
+                    <!-- Workspaces will be rendered here -->
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="cancelMoveBtn">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script type="module" src="user-profile-manager.js"></script>
+    <script type="module" src="workspace-invitations.js"></script>
+    <script type="module" src="shared-workspace-system.js"></script>
+    <script type="module" src="shared-workspace-ui-controller.js"></script>
     <script type="module" src="app.js"></script>
 </body>
 

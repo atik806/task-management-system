@@ -1,0 +1,49 @@
+<!-- ==================== WORKSPACE INVITATION UI COMPONENTS ==================== -->
+<!-- Add these components to index.html -->
+
+<!-- 1. Add Invitations Button to Sidebar (after Notes nav item) -->
+<a href="#" class="nav-item" id="invitationsBtn">
+    <i class="fas fa-envelope"></i>
+    <span>Invitations</span>
+    <span class="notification-badge" id="invitationBadge" style="display: none;">0</span>
+</a>
+
+<!-- 2. Invitations Modal (add before closing </body> tag) -->
+<div id="invitationsModal" class="modal">
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h3><i class="fas fa-envelope"></i> Workspace Invitations</h3>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="invitations-header">
+                <p class="invitations-subtitle">Review and respond to workspace invitations</p>
+            </div>
+            <div id="invitationsList" class="invitations-list">
+                <!-- Invitations will be rendered here by JavaScript -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 3. Update Workspace Settings Modal - Add Invite Section -->
+<!-- Add this to the Members tab in workspace settings -->
+<div class="invite-section">
+    <h4>Invite New Members</h4>
+    <form id="workspaceInviteForm" class="invite-form">
+        <div class="form-row">
+            <div class="form-group" style="flex: 2;">
+                <input type="email" id="workspaceInviteEmail" placeholder="colleague@example.com" required />
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <select id="workspaceInviteRole">
+                    <option value="member">Member</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-paper-plane"></i> Send Invite
+            </button>
+        </div>
+    </form>
+</div>

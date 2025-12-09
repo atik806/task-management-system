@@ -18,6 +18,9 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// Export db to global scope for workspace-invitations.js
+window.db = db;
+
 let currentUser = null;
 let categories = [];
 let tasks = [];
@@ -42,11 +45,19 @@ const userEmailSpan = document.getElementById('userEmail');
 const taskCategorySelect = document.getElementById('taskCategory');
 
 // Auth State Observer
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
     currentUser = user;
+    window.currentUser = user; // Export to global scope
+    
     if (user) {
         console.log('User logged in:', user.email);
         userEmailSpan.textContent = user.email;
+        
+        // Create/update user profile
+        if (window.userProfileManager) {
+            await window.userProfileManager.createOrUpdateUserProfile(user);
+        }
+        
         initializeDashboard();
     } else {
         console.log('No user logged in, redirecting to landing page');
@@ -60,6 +71,21 @@ async function initializeDashboard() {
     await loadTasks();
     await loadNotes();
     renderBoard();
+    
+    // Initialize invitation system
+    if (window.invitationSystem) {
+        window.invitationSystem.initializeInvitationSystem();
+    }
+    
+    // Initialize shared workspace system
+    if (window.sharedWorkspaceSystem) {
+        window.sharedWorkspaceSystem.initializeSharedWorkspaceSystem();
+    }
+    
+    // Initialize shared workspace UI
+    if (window.initializeSharedWorkspaceUI) {
+        window.initializeSharedWorkspaceUI();
+    }
 }
 
 // Load Categories
@@ -193,6 +219,9 @@ function createTaskCard(task) {
             <button class="btn-delete" onclick="deleteTask('${task.id}')">
                 <i class="fas fa-trash"></i> Delete
             </button>
+            <button class="btn-move" onclick="showMoveToWorkspaceModal('${task.id}')" title="Move to Shared Workspace">
+                <i class="fas fa-share-alt"></i> Move
+            </button>
         </div>
     `;
     
@@ -305,12 +334,15 @@ taskForm.addEventListener('submit', async (e) => {
         return;
     }
 
+    // Get status from select, default to 'todo' if not set
+    const selectedStatus = document.getElementById('taskCategory').value || 'todo';
+
     const task = {
         title: document.getElementById('taskTitle').value.trim(),
         description: document.getElementById('taskDesc').value.trim(),
         deadline: document.getElementById('taskDeadline').value,
         priority: document.getElementById('taskPriority').value,
-        status: document.getElementById('taskCategory').value,
+        status: selectedStatus, // Fixed: Now defaults to 'todo'
         userId: currentUser.uid,
         createdAt: new Date().toISOString()
     };
@@ -473,6 +505,11 @@ window.editTask = (taskId) => {
 // Logout
 logoutBtn.addEventListener('click', async () => {
     try {
+        // Cleanup invitation system
+        if (window.invitationSystem) {
+            window.invitationSystem.cleanupInvitationSystem();
+        }
+        
         await signOut(auth);
     } catch (error) {
         alert('Logout failed: ' + error.message);
@@ -1261,3 +1298,321 @@ if ('ontouchstart' in window) {
 }
 
 console.log('Responsive features initialized');
+
+
+// ==================== INVITE USER FUNCTIONALITY ====================
+
+const inviteUserModal = document.getElementById('inviteUserModal');
+const inviteUserForm = document.getElementById('inviteUserForm');
+const inviteUserNav = document.getElementById('inviteUserNav');
+const cancelInviteBtn = document.getElementById('cancelInviteBtn');
+
+// Open invite modal
+if (inviteUserNav) {
+    inviteUserNav.addEventListener('click', (e) => {
+        e.preventDefault();
+        inviteUserModal.style.display = 'block';
+        inviteUserForm.reset();
+    });
+}
+
+// Close invite modal
+if (cancelInviteBtn) {
+    cancelInviteBtn.addEventListener('click', () => {
+        inviteUserModal.style.display = 'none';
+        inviteUserForm.reset();
+    });
+}
+
+// Handle invite form submission
+if (inviteUserForm) {
+    inviteUserForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!currentUser) {
+            alert('Please login to invite users');
+            return;
+        }
+
+        const inviteEmail = document.getElementById('inviteEmail').value.trim();
+        const inviteMessage = document.getElementById('inviteMessage').value.trim();
+
+        // Validate email
+        if (!inviteEmail || !inviteEmail.includes('@')) {
+            alert('Please enter a valid email address');
+            return;
+        }
+
+        // Check if inviting self
+        if (inviteEmail.toLowerCase() === currentUser.email.toLowerCase()) {
+            alert('You cannot invite yourself!');
+            return;
+        }
+
+        try {
+            // Create invite document in Firestore (using workspaceInvitations collection)
+            const inviteData = {
+                workspaceId: 'personal-workspace-' + currentUser.uid,
+                workspaceName: 'Personal Workspace',
+                invitedBy: currentUser.uid,
+                inviterEmail: currentUser.email,
+                inviterName: currentUser.displayName || currentUser.email,
+                invitedEmail: inviteEmail.toLowerCase(),
+                message: inviteMessage,
+                role: 'member',
+                status: 'pending',
+                createdAt: new Date().toISOString(),
+                expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days
+            };
+
+            const docRef = await addDoc(collection(db, 'workspaceInvitations'), inviteData);
+            console.log('Invite created with ID:', docRef.id);
+
+            // Show success message
+            const modalBody = inviteUserModal.querySelector('.modal-body');
+            const successMessage = document.createElement('div');
+            successMessage.className = 'invite-success';
+            successMessage.innerHTML = `
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <p><strong>Invite sent successfully!</strong></p>
+                    <p>An invitation has been sent to ${escapeHtml(inviteEmail)}. They will receive instructions to join TaskFlow.</p>
+                </div>
+            `;
+            
+            // Insert success message at the top
+            modalBody.insertBefore(successMessage, modalBody.firstChild);
+
+            // Reset form
+            inviteUserForm.reset();
+
+            // Auto-close after 3 seconds
+            setTimeout(() => {
+                inviteUserModal.style.display = 'none';
+                successMessage.remove();
+            }, 3000);
+
+        } catch (error) {
+            console.error('Error sending invite:', error);
+            alert('Error sending invite: ' + error.message);
+        }
+    });
+}
+
+// Close modal when clicking outside
+window.addEventListener('click', (e) => {
+    if (e.target === inviteUserModal) {
+        inviteUserModal.style.display = 'none';
+        inviteUserForm.reset();
+    }
+});
+
+// Close modal with X button
+const inviteModalClose = inviteUserModal?.querySelector('.close');
+if (inviteModalClose) {
+    inviteModalClose.addEventListener('click', () => {
+        inviteUserModal.style.display = 'none';
+        inviteUserForm.reset();
+    });
+}
+
+console.log('Invite user functionality loaded');
+
+// ==================== MOVE TASK TO SHARED WORKSPACE ====================
+
+let taskToMove = null;
+
+// Show Move to Workspace Modal
+window.showMoveToWorkspaceModal = async function(taskId) {
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) {
+        console.error('Task not found:', taskId);
+        return;
+    }
+    
+    taskToMove = task;
+    
+    // Get shared workspaces
+    const sharedWorkspaces = window.sharedWorkspaceSystem?.getSharedWorkspaces() || [];
+    
+    if (sharedWorkspaces.length === 0) {
+        alert('You don\'t have any shared workspaces yet. Accept an invitation to create a shared workspace first.');
+        return;
+    }
+    
+    // Show modal
+    const modal = document.getElementById('moveToWorkspaceModal');
+    const taskPreview = document.getElementById('moveTaskPreview');
+    const workspaceList = document.getElementById('workspaceSelectionList');
+    
+    // Show task preview
+    taskPreview.innerHTML = `
+        <div class="task-preview-card">
+            <div class="task-preview-title">${escapeHtml(task.title)}</div>
+            <div class="task-preview-meta">
+                <span class="priority-badge priority-${task.priority}">${task.priority}</span>
+                <span class="task-preview-date">
+                    <i class="far fa-calendar"></i> ${formatDate(task.deadline)}
+                </span>
+            </div>
+        </div>
+    `;
+    
+    // Render workspace list
+    workspaceList.innerHTML = '';
+    sharedWorkspaces.forEach(workspace => {
+        const workspaceCard = document.createElement('div');
+        workspaceCard.className = 'workspace-selection-card';
+        
+        const memberCount = workspace.members ? workspace.members.length : 0;
+        const initials = workspace.name.split(' ').map(word => word[0]).join('').substring(0, 2).toUpperCase();
+        
+        workspaceCard.innerHTML = `
+            <div class="workspace-selection-header">
+                <div class="workspace-selection-avatar">${initials}</div>
+                <div class="workspace-selection-info">
+                    <div class="workspace-selection-name">${escapeHtml(workspace.name)}</div>
+                    <div class="workspace-selection-meta">${memberCount} member${memberCount !== 1 ? 's' : ''}</div>
+                </div>
+            </div>
+            <button class="btn-select-workspace" onclick="moveTaskToWorkspace('${workspace.id}')">
+                <i class="fas fa-arrow-right"></i> Move Here
+            </button>
+        `;
+        
+        workspaceList.appendChild(workspaceCard);
+    });
+    
+    modal.style.display = 'block';
+};
+
+// Move Task to Workspace
+window.moveTaskToWorkspace = async function(workspaceId) {
+    if (!taskToMove) {
+        console.error('No task selected to move');
+        return;
+    }
+    
+    try {
+        console.log('🔄 Moving task to workspace:', workspaceId);
+        
+        // Get workspace info
+        const sharedWorkspaces = window.sharedWorkspaceSystem?.getSharedWorkspaces() || [];
+        const workspace = sharedWorkspaces.find(ws => ws.id === workspaceId);
+        
+        if (!workspace) {
+            throw new Error('Workspace not found');
+        }
+        
+        // Create shared task data
+        const sharedTaskData = {
+            workspace_id: workspaceId,
+            title: taskToMove.title,
+            description: taskToMove.description || '',
+            category: taskToMove.category || 'todo',
+            priority: taskToMove.priority || 'medium',
+            deadline: taskToMove.deadline,
+            status: taskToMove.status || 'todo',
+            created_by: currentUser.uid,
+            created_by_name: currentUser.displayName || currentUser.email,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            updated_by: currentUser.uid
+        };
+        
+        // Add to shared workspace
+        const docRef = await addDoc(collection(db, 'sharedTasks'), sharedTaskData);
+        console.log('✅ Task added to shared workspace:', docRef.id);
+        
+        // Delete from personal tasks
+        await deleteDoc(doc(db, 'tasks', taskToMove.id));
+        console.log('✅ Task removed from personal workspace');
+        
+        // Update local tasks array
+        tasks = tasks.filter(t => t.id !== taskToMove.id);
+        
+        // Close modal
+        const modal = document.getElementById('moveToWorkspaceModal');
+        modal.style.display = 'none';
+        
+        // Refresh board
+        renderBoard();
+        
+        // Show success message
+        showMoveSuccessToast(workspace.name);
+        
+        // Reset
+        taskToMove = null;
+        
+    } catch (error) {
+        console.error('❌ Error moving task:', error);
+        alert('Failed to move task: ' + error.message);
+    }
+};
+
+// Show success toast
+function showMoveSuccessToast(workspaceName) {
+    const toast = document.createElement('div');
+    toast.className = 'success-toast';
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--success);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: var(--shadow-lg);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: slideIn 0.3s ease;
+    `;
+    toast.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        <span>Task moved to "${escapeHtml(workspaceName)}" successfully!</span>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Setup modal close handlers
+document.addEventListener('DOMContentLoaded', () => {
+    const moveModal = document.getElementById('moveToWorkspaceModal');
+    const cancelMoveBtn = document.getElementById('cancelMoveBtn');
+    
+    if (cancelMoveBtn) {
+        cancelMoveBtn.addEventListener('click', () => {
+            moveModal.style.display = 'none';
+            taskToMove = null;
+        });
+    }
+    
+    // Close on outside click
+    window.addEventListener('click', (e) => {
+        if (e.target === moveModal) {
+            moveModal.style.display = 'none';
+            taskToMove = null;
+        }
+    });
+    
+    // Close button
+    const closeBtn = moveModal?.querySelector('.close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            moveModal.style.display = 'none';
+            taskToMove = null;
+        });
+    }
+});
+
+// Export functions for global access
+window.loadTasks = loadTasks;
+window.renderBoard = renderBoard;
+window.renderNotes = renderNotes;

@@ -1,0 +1,192 @@
+<!-- ==================== WORKSPACE UI COMPONENTS ==================== -->
+<!-- Add these components to index.html -->
+
+<!-- Workspace Selector in Sidebar (Add after sidebar-header) -->
+<div class="workspace-selector">
+    <button id="workspaceSelectorBtn" class="workspace-selector-btn">
+        <div class="workspace-info">
+            <i class="fas fa-briefcase"></i>
+            <div class="workspace-details">
+                <span class="workspace-name" id="currentWorkspaceName">Personal Workspace</span>
+                <span class="workspace-role" id="currentWorkspaceRole">Owner</span>
+            </div>
+        </div>
+        <i class="fas fa-chevron-down"></i>
+    </button>
+    
+    <div id="workspaceDropdown" class="workspace-dropdown">
+        <div class="workspace-dropdown-header">
+            <h4>Your Workspaces</h4>
+        </div>
+        <div id="workspaceList" class="workspace-list">
+            <!-- Workspaces will be rendered here -->
+        </div>
+        <div class="workspace-dropdown-footer">
+            <button id="createWorkspaceBtn" class="btn-create-workspace">
+                <i class="fas fa-plus"></i>
+                <span>Create Workspace</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Create Workspace Modal -->
+<div id="createWorkspaceModal" class="modal">
+    <div class="modal-content modal-medium">
+        <div class="modal-header">
+            <h3><i class="fas fa-briefcase"></i> Create New Workspace</h3>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="createWorkspaceForm">
+                <div class="form-group">
+                    <label for="workspaceName">Workspace Name *</label>
+                    <input type="text" id="workspaceName" placeholder="e.g., Marketing Team" required />
+                </div>
+                <div class="form-group">
+                    <label for="workspaceDescription">Description (optional)</label>
+                    <textarea id="workspaceDescription" placeholder="What is this workspace for?" rows="3"></textarea>
+                </div>
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <p>You will be the owner of this workspace and can invite team members.</p>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="cancelCreateWorkspaceBtn">Cancel</button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-check"></i> Create Workspace
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Workspace Settings Modal -->
+<div id="workspaceSettingsModal" class="modal">
+    <div class="modal-content modal-large">
+        <div class="modal-header">
+            <h3><i class="fas fa-cog"></i> Workspace Settings</h3>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="settings-tabs">
+                <button class="settings-tab active" data-tab="general">
+                    <i class="fas fa-info-circle"></i> General
+                </button>
+                <button class="settings-tab" data-tab="members">
+                    <i class="fas fa-users"></i> Members
+                </button>
+                <button class="settings-tab" data-tab="invites">
+                    <i class="fas fa-envelope"></i> Invites
+                </button>
+            </div>
+            
+            <!-- General Tab -->
+            <div id="generalTab" class="settings-tab-content active">
+                <div class="form-group">
+                    <label for="settingsWorkspaceName">Workspace Name</label>
+                    <input type="text" id="settingsWorkspaceName" />
+                </div>
+                <div class="form-group">
+                    <label for="settingsWorkspaceDescription">Description</label>
+                    <textarea id="settingsWorkspaceDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <button id="saveWorkspaceSettingsBtn" class="btn-primary">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+                <div class="danger-zone">
+                    <h4>Danger Zone</h4>
+                    <button id="leaveWorkspaceBtn" class="btn-danger">
+                        <i class="fas fa-sign-out-alt"></i> Leave Workspace
+                    </button>
+                    <button id="deleteWorkspaceBtn" class="btn-danger">
+                        <i class="fas fa-trash"></i> Delete Workspace
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Members Tab -->
+            <div id="membersTab" class="settings-tab-content">
+                <div class="members-header">
+                    <h4>Workspace Members</h4>
+                    <button id="inviteMemberBtn" class="btn-primary">
+                        <i class="fas fa-user-plus"></i> Invite Member
+                    </button>
+                </div>
+                <div id="membersList" class="members-list">
+                    <!-- Members will be rendered here -->
+                </div>
+            </div>
+            
+            <!-- Invites Tab -->
+            <div id="invitesTab" class="settings-tab-content">
+                <div class="invites-header">
+                    <h4>Pending Invites</h4>
+                </div>
+                <div id="invitesList" class="invites-list">
+                    <!-- Invites will be rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Invite Member Modal -->
+<div id="inviteMemberModal" class="modal">
+    <div class="modal-content modal-medium">
+        <div class="modal-header">
+            <h3><i class="fas fa-user-plus"></i> Invite Member</h3>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="inviteMemberForm">
+                <div class="form-group">
+                    <label for="inviteEmail">Email Address *</label>
+                    <input type="email" id="inviteEmail" placeholder="colleague@example.com" required />
+                </div>
+                <div class="form-group">
+                    <label for="inviteRole">Role</label>
+                    <select id="inviteRole">
+                        <option value="member">Member - Can view and edit content</option>
+                        <option value="admin">Admin - Can manage members and settings</option>
+                    </select>
+                </div>
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <p>An invitation email will be sent. The invite link expires in 7 days.</p>
+                </div>
+                <div id="inviteLinkContainer" class="invite-link-container" style="display: none;">
+                    <label>Invite Link</label>
+                    <div class="invite-link-box">
+                        <input type="text" id="inviteLinkInput" readonly />
+                        <button type="button" id="copyInviteLinkBtn" class="btn-secondary">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <p class="help-text">Share this link with the person you want to invite</p>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="cancelInviteBtn">Cancel</button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-paper-plane"></i> Send Invite
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Workspace Settings Button (Add to sidebar-nav) -->
+<a href="#" class="nav-item" id="workspaceSettingsNav">
+    <i class="fas fa-cog"></i>
+    <span>Workspace Settings</span>
+</a>
+
+<!-- Add workspace indicator to top bar -->
+<div class="workspace-indicator">
+    <i class="fas fa-users"></i>
+    <span id="memberCount">1 member</span>
+</div>

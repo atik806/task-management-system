@@ -1,0 +1,273 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ==================== HELPER FUNCTIONS ====================
+    
+    // Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Get user ID
+    function getUserId() {
+      return request.auth.uid;
+    }
+    
+    // Check if user is member of workspace
+    function isMemberOfWorkspace(workspaceId) {
+      return exists(/databases/$(database)/documents/workspaceMembers/$(workspaceId + '_' + getUserId()));
+    }
+    
+    // Get user's role in workspace
+    function getUserRole(workspaceId) {
+      return get(/databases/$(database)/documents/workspaceMembers/$(workspaceId + '_' + getUserId())).data.role;
+    }
+    
+    // Check if user is owner
+    function isOwner(workspaceId) {
+      return isMemberOfWorkspace(workspaceId) && getUserRole(workspaceId) == 'owner';
+    }
+    
+    // Check if user is admin or owner
+    function isAdminOrOwner(workspaceId) {
+      return isMemberOfWorkspace(workspaceId) && 
+             (getUserRole(workspaceId) == 'admin' || getUserRole(workspaceId) == 'owner');
+    }
+    
+    // Check if user has any role in workspace
+    function hasWorkspaceAccess(workspaceId) {
+      return isMemberOfWorkspace(workspaceId) && 
+             get(/databases/$(database)/documents/workspaceMembers/$(workspaceId + '_' + getUserId())).data.status == 'active';
+    }
+    
+    // ==================== WORKSPACES ====================
+    
+    match /workspaces/{workspaceId} {
+      allow create: if isAuthenticated() && request.resource.data.ownerId == getUserId();
+      allow read: if isAuthenticated() && hasWorkspaceAccess(workspaceId);
+      allow update: if isAuthenticated() && isOwner(workspaceId);
+      allow delete: if isAuthenticated() && isOwner(workspaceId);
+    }
+    
+    // ==================== WORKSPACE MEMBERS ====================
+    
+    match /workspaceMembers/{memberId} {
+      allow read: if isAuthenticated() && 
+                     (hasWorkspaceAccess(resource.data.workspaceId) || 
+                      resource.data.userId == getUserId());
+      
+      allow create: if isAuthenticated() && 
+                       (isAdminOrOwner(request.resource.data.workspaceId) ||
+                        request.resource.data.userId == getUserId());
+      
+      allow update: if isAuthenticated() && 
+                       (isAdminOrOwner(resource.data.workspaceId) && 
+                        resource.data.role != 'owner' &&
+                        request.resource.data.role != 'owner') ||
+                       (resource.data.userId == getUserId() && 
+                        request.resource.data.role == resource.data.role);
+      
+      allow delete: if isAuthenticated() && 
+                       ((isAdminOrOwner(resource.data.workspaceId) && 
+                         resource.data.role != 'owner') ||
+                        resource.data.userId == getUserId());
+    }
+    
+    // ==================== WORKSPACE INVITES ====================
+    
+    match /workspaceInvites/{inviteId} {
+      allow read: if isAuthenticated() && 
+                     (hasWorkspaceAccess(resource.data.workspaceId) ||
+                      resource.data.invitedEmail == request.auth.token.email);
+      
+      allow create: if isAuthenticated() && 
+                       isAdminOrOwner(request.resource.data.workspaceId) &&
+                       request.resource.data.invitedBy == getUserId();
+      
+      allow update: if isAuthenticated() && 
+                       (resource.data.invitedEmail == request.auth.token.email ||
+                        isAdminOrOwner(resource.data.workspaceId));
+      
+      allow delete: if isAuthenticated() && 
+                       isAdminOrOwner(resource.data.workspaceId);
+    }
+    
+    // ==================== USER WORKSPACES ====================
+    
+    match /userWorkspaces/{userWorkspaceId} {
+      allow read: if isAuthenticated() && resource.data.userId == getUserId();
+      allow create: if isAuthenticated() && request.resource.data.userId == getUserId();
+      allow update: if isAuthenticated() && resource.data.userId == getUserId();
+      allow delete: if isAuthenticated() && resource.data.userId == getUserId();
+    }
+    
+    // ==================== TASKS (BACKWARD COMPATIBLE) ====================
+    
+    match /tasks/{taskId} {
+      // BACKWARD COMPATIBLE: Allow reading old tasks (with userId) OR new tasks (with workspaceId)
+      allow read: if isAuthenticated() && 
+                     (
+                       // Old format: userId field
+                       (resource.data.userId == getUserId()) ||
+                       // New format: workspaceId field
+                       (hasWorkspaceAccess(resource.data.workspaceId))
+                     );
+      
+      // BACKWARD COMPATIBLE: Allow creating with either userId OR workspaceId
+      allow create: if isAuthenticated() && 
+                       (
+                         // Old format
+                         (request.resource.data.userId == getUserId()) ||
+                         // New format
+                         (hasWorkspaceAccess(request.resource.data.workspaceId) &&
+                          request.resource.data.createdBy == getUserId())
+                       );
+      
+      // BACKWARD COMPATIBLE: Allow updating old or new format
+      allow update: if isAuthenticated() && 
+                       (
+                         // Old format: own tasks
+                         (resource.data.userId == getUserId()) ||
+                         // New format: own tasks or admin/owner
+                         (hasWorkspaceAccess(resource.data.workspaceId) &&
+                          (resource.data.createdBy == getUserId() || 
+                           isAdminOrOwner(resource.data.workspaceId)))
+                       );
+      
+      // BACKWARD COMPATIBLE: Allow deleting old or new format
+      allow delete: if isAuthenticated() && 
+                       (
+                         // Old format: own tasks
+                         (resource.data.userId == getUserId()) ||
+                         // New format: own tasks or admin/owner
+                         (hasWorkspaceAccess(resource.data.workspaceId) &&
+                          (resource.data.createdBy == getUserId() || 
+                           isAdminOrOwner(resource.data.workspaceId)))
+                       );
+    }
+    
+    // ==================== CATEGORIES (BACKWARD COMPATIBLE) ====================
+    
+    match /categories/{categoryId} {
+      // BACKWARD COMPATIBLE: Allow reading old or new format
+      allow read: if isAuthenticated() && 
+                     (
+                       // Old format: userId field
+                       (resource.data.userId == getUserId()) ||
+                       // New format: workspaceId field
+                       (hasWorkspaceAccess(resource.data.workspaceId))
+                     );
+      
+      // BACKWARD COMPATIBLE: Allow creating with either format
+      allow create: if isAuthenticated() && 
+                       (
+                         // Old format
+                         (request.resource.data.userId == getUserId()) ||
+                         // New format
+                         (hasWorkspaceAccess(request.resource.data.workspaceId) &&
+                          request.resource.data.createdBy == getUserId())
+                       );
+      
+      // BACKWARD COMPATIBLE: Allow updating
+      allow update: if isAuthenticated() && 
+                       (
+                         // Old format
+                         (resource.data.userId == getUserId()) ||
+                         // New format: admin/owner only
+                         (hasWorkspaceAccess(resource.data.workspaceId) &&
+                          isAdminOrOwner(resource.data.workspaceId))
+                       );
+      
+      // BACKWARD COMPATIBLE: Allow deleting
+      allow delete: if isAuthenticated() && 
+                       (
+                         // Old format
+                         (resource.data.userId == getUserId()) ||
+                         // New format: admin/owner only, not default
+                         (hasWorkspaceAccess(resource.data.workspaceId) &&
+                          isAdminOrOwner(resource.data.workspaceId) &&
+                          resource.data.isDefault != true)
+                       );
+    }
+    
+    // ==================== NOTES (BACKWARD COMPATIBLE) ====================
+    
+    match /notes/{noteId} {
+      // BACKWARD COMPATIBLE: Allow reading old or new format
+      allow read: if isAuthenticated() && 
+                     (
+                       // Old format: userId field
+                       (resource.data.userId == getUserId()) ||
+                       // New format: workspaceId field
+                       (hasWorkspaceAccess(resource.data.workspaceId))
+                     );
+      
+      // BACKWARD COMPATIBLE: Allow creating with either format
+      allow create: if isAuthenticated() && 
+                       (
+                         // Old format
+                         (request.resource.data.userId == getUserId()) ||
+                         // New format
+                         (hasWorkspaceAccess(request.resource.data.workspaceId) &&
+                          request.resource.data.createdBy == getUserId())
+                       );
+      
+      // BACKWARD COMPATIBLE: Allow updating
+      allow update: if isAuthenticated() && 
+                       (
+                         // Old format
+                         (resource.data.userId == getUserId()) ||
+                         // New format: own notes or admin/owner
+                         (hasWorkspaceAccess(resource.data.workspaceId) &&
+                          (resource.data.createdBy == getUserId() || 
+                           isAdminOrOwner(resource.data.workspaceId)))
+                       );
+      
+      // BACKWARD COMPATIBLE: Allow deleting
+      allow delete: if isAuthenticated() && 
+                       (
+                         // Old format
+                         (resource.data.userId == getUserId()) ||
+                         // New format: own notes or admin/owner
+                         (hasWorkspaceAccess(resource.data.workspaceId) &&
+                          (resource.data.createdBy == getUserId() || 
+                           isAdminOrOwner(resource.data.workspaceId)))
+                       );
+    }
+    
+    // ==================== INVITES (Simple Collaboration) ====================
+    
+    match /invites/{inviteId} {
+      // Users can read invites they sent or received
+      allow read: if isAuthenticated() && 
+                     (resource.data.invitedBy == getUserId() ||
+                      resource.data.invitedEmail == request.auth.token.email);
+      
+      // Any authenticated user can create invites
+      allow create: if isAuthenticated() && 
+                       request.resource.data.invitedBy == getUserId();
+      
+      // Invited user can update status (accept/decline)
+      allow update: if isAuthenticated() && 
+                       (resource.data.invitedEmail == request.auth.token.email ||
+                        resource.data.invitedBy == getUserId());
+      
+      // Inviter can delete their invites
+      allow delete: if isAuthenticated() && 
+                       resource.data.invitedBy == getUserId();
+    }
+    
+    // ==================== ACTIVITY LOG (Optional) ====================
+    
+    match /workspaceActivity/{activityId} {
+      allow read: if isAuthenticated() && 
+                     hasWorkspaceAccess(resource.data.workspaceId);
+      
+      allow create: if isAuthenticated() && 
+                       hasWorkspaceAccess(request.resource.data.workspaceId);
+      
+      allow update, delete: if false;
+    }
+  }
+}
