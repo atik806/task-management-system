@@ -141,6 +141,25 @@
                         <button class="filter-btn" data-filter="overdue">Overdue</button>
                         <button class="filter-btn" data-filter="completed">Completed</button>
                     </div>
+                    <div class="mytasks-toolbar">
+                        <div class="mytasks-search">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="mytaskSearch" placeholder="Search tasks by title or description..." autocomplete="off">
+                            <button class="search-clear" id="mytaskSearchClear" title="Clear search" hidden>
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="mytasks-sort">
+                            <label for="mytaskSort"><i class="fas fa-sort-amount-down"></i> Sort</label>
+                            <select id="mytaskSort">
+                                <option value="deadline">Due date</option>
+                                <option value="priority">Priority</option>
+                                <option value="title">Title (A-Z)</option>
+                                <option value="recent">Recently added</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="mytaskSummary" class="mytask-summary"></div>
                     <div id="mytasksList" class="mytasks-list">
                         <!-- Tasks will be rendered here -->
                     </div>

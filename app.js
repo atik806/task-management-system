@@ -427,6 +427,7 @@ window.deleteTask = async (taskId) => {
         await deleteDoc(doc(db, 'tasks', taskId));
         tasks = tasks.filter(t => t.id !== taskId);
         renderBoard();
+        renderMyTasks();
     } catch (error) {
         console.error('Error deleting task:', error);
         alert('Error deleting task: ' + error.message);
@@ -451,6 +452,7 @@ window.deleteCategory = async (categoryId) => {
         
         updateCategorySelect();
         renderBoard();
+        renderMyTasks();
     } catch (error) {
         console.error('Error deleting category:', error);
         alert('Error deleting category: ' + error.message);
@@ -492,7 +494,8 @@ window.editTask = (taskId) => {
             
             taskModal.style.display = 'none';
             renderBoard();
-            
+            renderMyTasks();
+
             // Reset form handler
             taskForm.onsubmit = null;
         } catch (error) {
@@ -585,7 +588,7 @@ navItems.forEach(item => {
         
         // Load view data
         if (viewName === 'mytasks') {
-            renderMyTasks('all');
+            renderMyTasks();
         } else if (viewName === 'calendar') {
             renderCalendar();
         } else if (viewName === 'notes') {
@@ -597,21 +600,62 @@ navItems.forEach(item => {
 // ==================== MY TASKS VIEW ====================
 const mytasksList = document.getElementById('mytasksList');
 const filterBtns = document.querySelectorAll('.filter-btn');
+const mytaskSearch = document.getElementById('mytaskSearch');
+const mytaskSearchClear = document.getElementById('mytaskSearchClear');
+const mytaskSort = document.getElementById('mytaskSort');
 
+let myTasksFilter = 'all';
+
+// Filter buttons
 filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         filterBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        renderMyTasks(btn.dataset.filter);
+        myTasksFilter = btn.dataset.filter;
+        renderMyTasks();
     });
 });
 
-function renderMyTasks(filter) {
+// Search input
+if (mytaskSearch) {
+    mytaskSearch.addEventListener('input', () => {
+        if (mytaskSearchClear) mytaskSearchClear.hidden = !mytaskSearch.value;
+        renderMyTasks();
+    });
+}
+
+// Clear search
+if (mytaskSearchClear) {
+    mytaskSearchClear.addEventListener('click', () => {
+        mytaskSearch.value = '';
+        mytaskSearchClear.hidden = true;
+        renderMyTasks();
+        if (mytaskSearch) mytaskSearch.focus();
+    });
+}
+
+// Sort selector
+if (mytaskSort) {
+    mytaskSort.addEventListener('change', () => renderMyTasks());
+}
+
+function getCategoryById(id) {
+    return categories.find(c => c.id === id);
+}
+
+const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 };
+
+function renderMyTasks() {
+    const filter = myTasksFilter;
+    const searchTerm = (mytaskSearch ? mytaskSearch.value : '').trim().toLowerCase();
+    const sortBy = mytaskSort ? mytaskSort.value : 'deadline';
+
     let filteredTasks = [...tasks];
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
-    switch(filter) {
+
+    // Time-range filter
+    switch (filter) {
         case 'today':
             filteredTasks = tasks.filter(t => {
                 const taskDate = new Date(t.deadline);
@@ -635,64 +679,191 @@ function renderMyTasks(filter) {
             filteredTasks = tasks.filter(t => t.status === 'completed');
             break;
     }
-    
-    // Sort by deadline
-    filteredTasks.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
-    
+
+    // Search filter
+    if (searchTerm) {
+        filteredTasks = filteredTasks.filter(t =>
+            (t.title || '').toLowerCase().includes(searchTerm) ||
+            (t.description || '').toLowerCase().includes(searchTerm)
+        );
+    }
+
+    // Sort
+    switch (sortBy) {
+        case 'priority':
+            filteredTasks.sort((a, b) =>
+                (PRIORITY_ORDER[a.priority] ?? 3) - (PRIORITY_ORDER[b.priority] ?? 3)
+            );
+            break;
+        case 'title':
+            filteredTasks.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+            break;
+        case 'recent':
+            filteredTasks.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+            break;
+        default:
+            filteredTasks.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+    }
+
+    // Summary line
+    renderMyTaskSummary(filteredTasks);
+
     mytasksList.innerHTML = '';
-    
+
     if (filteredTasks.length === 0) {
         mytasksList.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-inbox"></i>
-                <p>No tasks found</p>
+                <p>${getEmptyStateMessage(filter, searchTerm)}</p>
             </div>
         `;
         return;
     }
-    
-    filteredTasks.forEach(task => {
-        const category = categories.find(c => c.id === task.status);
-        const taskDate = new Date(task.deadline);
-        const isOverdue = taskDate < today && task.status !== 'completed';
-        
-        const taskItem = document.createElement('div');
-        taskItem.className = `mytask-item priority-${task.priority} ${task.status === 'completed' ? 'completed' : ''}`;
-        
-        taskItem.innerHTML = `
-            <div class="mytask-content">
-                <div class="mytask-title">${escapeHtml(task.title)}</div>
-                <div class="mytask-meta">
-                    <div class="mytask-category">
-                        <i class="${category ? category.icon : 'fas fa-folder'}"></i>
-                        <span>${category ? category.name : 'Unknown'}</span>
-                    </div>
-                    <div class="task-date ${isOverdue ? 'text-danger' : ''}">
-                        <i class="far fa-calendar"></i>
-                        <span>${formatDate(task.deadline)}</span>
-                        ${isOverdue ? '<i class="fas fa-exclamation-circle"></i>' : ''}
-                    </div>
-                    <span class="priority-badge priority-${task.priority}">${task.priority}</span>
-                </div>
-            </div>
-            <div class="mytask-actions">
-                ${task.status !== 'completed' ? 
-                    `<button class="btn-edit" onclick="markComplete('${task.id}')">
-                        <i class="fas fa-check"></i> Complete
-                    </button>` : 
-                    `<button class="btn-edit" onclick="markIncomplete('${task.id}')">
-                        <i class="fas fa-undo"></i> Reopen
-                    </button>`
-                }
-                <button class="btn-delete" onclick="deleteTask('${task.id}')">
-                    <i class="fas fa-trash"></i>
-                </button>
+
+    // Group tasks by status (category order, defaults first)
+    const groups = new Map();
+    categories.forEach(c => groups.set(c.id, []));
+    filteredTasks.forEach(t => {
+        if (!groups.has(t.status)) groups.set(t.status, []);
+        groups.get(t.status).push(t);
+    });
+
+    groups.forEach((groupTasks, status) => {
+        if (groupTasks.length === 0) return;
+        const category = getCategoryById(status);
+
+        const groupEl = document.createElement('div');
+        groupEl.className = 'mytask-group';
+        groupEl.innerHTML = `
+            <div class="mytask-group-header">
+                <i class="${category ? category.icon : 'fas fa-folder'}"></i>
+                <span class="mytask-group-title">${category ? category.name : status}</span>
+                <span class="mytask-group-count">${groupTasks.length}</span>
             </div>
         `;
-        
-        mytasksList.appendChild(taskItem);
+        mytasksList.appendChild(groupEl);
+
+        groupTasks.forEach(task => {
+            mytasksList.appendChild(createMyTaskItem(task, today));
+        });
     });
 }
+
+// Render the summary chips above the list
+function renderMyTaskSummary(filteredTasks) {
+    const summaryEl = document.getElementById('mytaskSummary');
+    if (!summaryEl) return;
+
+    const total = filteredTasks.length;
+    const done = filteredTasks.filter(t => t.status === 'completed').length;
+    const pending = total - done;
+    const overdue = filteredTasks.filter(t => {
+        const d = new Date(t.deadline);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return d < today && t.status !== 'completed';
+    }).length;
+
+    summaryEl.innerHTML = `
+        <span class="summary-chip summary-total"><i class="fas fa-tasks"></i>${total} ${total === 1 ? 'task' : 'tasks'}</span>
+        <span class="summary-chip summary-pending"><i class="fas fa-hourglass-half"></i>${pending} pending</span>
+        <span class="summary-chip summary-done"><i class="fas fa-check-circle"></i>${done} done</span>
+        <span class="summary-chip summary-overdue ${overdue > 0 ? 'has-overdue' : ''}"><i class="fas fa-exclamation-circle"></i>${overdue} overdue</span>
+    `;
+}
+
+function getEmptyStateMessage(filter, searchTerm) {
+    if (searchTerm) return `No tasks match "${searchTerm}"`;
+    switch (filter) {
+        case 'today': return 'No tasks due today';
+        case 'upcoming': return 'No upcoming tasks';
+        case 'overdue': return 'No overdue tasks — great job!';
+        case 'completed': return 'No completed tasks yet';
+        default: return 'No tasks yet. Click "Add Task" to create your first one.';
+    }
+}
+
+// Create a single list row for a task
+function createMyTaskItem(task, today) {
+    const item = document.createElement('div');
+    item.className = `mytask-item priority-${task.priority} ${task.status === 'completed' ? 'completed' : ''}`;
+    item.dataset.taskId = task.id;
+
+    const category = getCategoryById(task.status);
+    const taskDate = new Date(task.deadline);
+    const isOverdue = taskDate < today && task.status !== 'completed';
+    const isCompleted = task.status === 'completed';
+
+    const statusOptions = categories.map(c =>
+        `<option value="${c.id}" ${c.id === task.status ? 'selected' : ''}>${escapeHtml(c.name)}</option>`
+    ).join('');
+
+    const desc = (task.description || '').trim();
+    const descSnippet = desc.length > 90 ? desc.slice(0, 90) + '…' : desc;
+
+    item.innerHTML = `
+        <button class="mytask-check" onclick="toggleMyTaskComplete('${task.id}')"
+            title="${isCompleted ? 'Mark as incomplete' : 'Mark as complete'}" aria-label="Toggle complete">
+            <i class="fas fa-check"></i>
+        </button>
+        <div class="mytask-content">
+            <div class="mytask-title">${escapeHtml(task.title)}</div>
+            ${descSnippet ? `<div class="mytask-desc">${escapeHtml(descSnippet)}</div>` : ''}
+            <div class="mytask-meta">
+                <div class="mytask-category">
+                    <i class="${category ? category.icon : 'fas fa-folder'}"></i>
+                    <span>${category ? category.name : 'Unknown'}</span>
+                </div>
+                <div class="task-date ${isOverdue ? 'text-danger' : ''}">
+                    <i class="far fa-calendar"></i>
+                    <span>${formatDate(task.deadline)}</span>
+                    ${isOverdue ? '<i class="fas fa-exclamation-circle"></i>' : ''}
+                </div>
+                <span class="priority-badge priority-${task.priority}">${task.priority}</span>
+            </div>
+        </div>
+        <div class="mytask-actions">
+            <select class="mytask-status-select" onchange="changeTaskStatus('${task.id}', this.value)" title="Change status">
+                ${statusOptions}
+            </select>
+            <button class="btn-edit" onclick="editTask('${task.id}')">
+                <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="btn-delete" onclick="deleteTask('${task.id}')">
+                <i class="fas fa-trash"></i> Delete
+            </button>
+        </div>
+    `;
+
+    return item;
+}
+
+// Toggle a task complete / reopen from the list
+window.toggleMyTaskComplete = async (taskId) => {
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) return;
+    if (task.status === 'completed') {
+        await window.markIncomplete(taskId);
+    } else {
+        await window.markComplete(taskId);
+    }
+};
+
+// Change a task's status inline from the list
+window.changeTaskStatus = async (taskId, newStatus) => {
+    try {
+        await updateDoc(doc(db, 'tasks', taskId), { status: newStatus });
+        const task = tasks.find(t => t.id === taskId);
+        if (task) task.status = newStatus;
+        renderMyTasks();
+        renderBoard();
+        updateTaskCounts();
+    } catch (error) {
+        console.error('Error changing task status:', error);
+        alert('Failed to update task status: ' + error.message);
+        renderMyTasks();
+    }
+};
 
 // Mark task as complete
 window.markComplete = async (taskId) => {
@@ -700,7 +871,7 @@ window.markComplete = async (taskId) => {
         await updateDoc(doc(db, 'tasks', taskId), { status: 'completed' });
         const task = tasks.find(t => t.id === taskId);
         if (task) task.status = 'completed';
-        renderMyTasks(document.querySelector('.filter-btn.active').dataset.filter);
+        renderMyTasks();
         renderBoard();
     } catch (error) {
         console.error('Error completing task:', error);
@@ -714,7 +885,7 @@ window.markIncomplete = async (taskId) => {
         await updateDoc(doc(db, 'tasks', taskId), { status: 'todo' });
         const task = tasks.find(t => t.id === taskId);
         if (task) task.status = 'todo';
-        renderMyTasks(document.querySelector('.filter-btn.active').dataset.filter);
+        renderMyTasks();
         renderBoard();
     } catch (error) {
         console.error('Error reopening task:', error);
@@ -1132,7 +1303,7 @@ navItems.forEach(item => {
         
         // Load view data
         if (viewName === 'mytasks') {
-            renderMyTasks('all');
+            renderMyTasks();
         } else if (viewName === 'calendar') {
             renderCalendar();
         } else if (viewName === 'notes') {

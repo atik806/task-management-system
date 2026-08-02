@@ -735,6 +735,7 @@ body.dark-mode {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 16px;
     transition: all 0.3s;
 }
 
@@ -804,6 +805,272 @@ body.dark-mode {
     font-size: 12px;
     font-weight: 600;
     transition: all 0.3s;
+}
+
+/* ==================== MY TASKS TOOLBAR & GROUPS ==================== */
+.mytasks-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.mytasks-search {
+    position: relative;
+    flex: 1;
+    min-width: 240px;
+    max-width: 420px;
+}
+
+.mytasks-search > i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-light);
+    font-size: 14px;
+    pointer-events: none;
+}
+
+.mytasks-search input {
+    width: 100%;
+    padding: 11px 40px 11px 40px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    color: var(--dark);
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.mytasks-search input::placeholder {
+    color: var(--gray-light);
+}
+
+.mytasks-search input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.search-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--gray-light);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.search-clear:hover {
+    background: var(--bg-primary);
+    color: var(--danger);
+}
+
+.mytasks-sort {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mytasks-sort label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.mytasks-sort select {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    color: var(--dark);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.mytasks-sort select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.mytask-summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.summary-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--gray);
+}
+
+.summary-chip i {
+    font-size: 12px;
+}
+
+.summary-total {
+    color: var(--primary);
+    background: #eef2ff;
+    border-color: #c7d2fe;
+}
+
+.summary-done {
+    color: var(--success);
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+}
+
+.summary-pending {
+    color: #b45309;
+    background: #fffbeb;
+    border-color: #fde68a;
+}
+
+.summary-overdue.has-overdue {
+    color: var(--danger);
+    background: #fef2f2;
+    border-color: #fecaca;
+}
+
+body.dark-mode .summary-total {
+    background: rgba(99, 102, 241, 0.15);
+    border-color: rgba(99, 102, 241, 0.4);
+}
+
+body.dark-mode .summary-done {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+body.dark-mode .summary-pending {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: rgba(245, 158, 11, 0.4);
+}
+
+body.dark-mode .summary-overdue.has-overdue {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.mytask-group-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 4px 8px;
+    margin-top: 12px;
+    border-bottom: 2px solid var(--border);
+}
+
+.mytask-group-header i {
+    font-size: 14px;
+    color: var(--primary);
+}
+
+.mytask-group-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--dark);
+}
+
+.mytask-group-count {
+    margin-left: auto;
+    background: var(--bg-primary);
+    border-radius: 999px;
+    padding: 3px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gray);
+}
+
+.mytask-check {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--gray-light);
+    background: transparent;
+    color: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all 0.3s;
+}
+
+.mytask-check:hover {
+    border-color: var(--success);
+    color: var(--success);
+}
+
+.mytask-item.completed .mytask-check {
+    background: var(--success);
+    border-color: var(--success);
+    color: white;
+}
+
+.mytask-desc {
+    font-size: 13px;
+    color: var(--gray);
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.mytask-status-select {
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-secondary);
+    color: var(--dark);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.mytask-status-select:hover {
+    border-color: var(--primary);
+}
+
+.text-danger {
+    color: var(--danger);
+}
+
+.text-danger i {
+    margin-left: 4px;
+    font-size: 12px;
 }
 
 /* Calendar View */
@@ -1319,18 +1586,39 @@ body.dark-mode {
     }
 
     .mytask-item {
-        flex-direction: column;
+        flex-direction: row;
+        flex-wrap: wrap;
         align-items: flex-start;
         padding: 16px;
+    }
+
+    .mytask-content {
+        flex: 1;
+        min-width: 0;
     }
 
     .mytask-actions {
         width: 100%;
         margin-top: 12px;
+        flex-wrap: wrap;
     }
 
     .mytask-actions button {
         flex: 1;
+    }
+
+    .mytasks-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .mytasks-search {
+        max-width: none;
+        min-width: 0;
+    }
+
+    .mytasks-sort {
+        justify-content: space-between;
     }
 
     .calendar-container {
